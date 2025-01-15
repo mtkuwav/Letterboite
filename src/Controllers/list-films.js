@@ -1,7 +1,10 @@
 import axios from 'axios';
 
-import ViewNav from '../Views/list-users/nav';
-import ViewUsers from '../Views/list-users';
+import ViewNav from '../Views/list-films/nav';
+import ViewUsers from '../Views/list-films';
+
+const apiKey = document.querySelector('#token');
+const url = 'https://api.themoviedb.org/3/movie/popular';
 
 const ListUsers = class ListUsers {
   constructor(params) {
@@ -36,21 +39,22 @@ const ListUsers = class ListUsers {
     `;
   }
 
-  run() {
-    axios
-      .get('https://randomuser.me/api/', {
+  async run() {
+    try {
+      const response = await axios.get(url, {
         params: {
-          results: this.params.results
+          api_key: apiKey,
+          language: 'fr-FR',
+          page: '1'
         }
-      })
-      .then((res) => {
-        const { data } = res;
-
-        this.users = data.results;
-
-        this.el.innerHTML = this.render();
-        this.onKeyPress();
       });
+
+      this.users = response.data.results;
+      this.el.innerHTML = this.render();
+      this.onKeyPress();
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+    }
   }
 };
 

@@ -1,0 +1,75 @@
+import axios from 'axios';
+
+import ViewForm from '../Views/login/login';
+
+const LoginUser = class LoginUser {
+  constructor() {
+    this.el = document.querySelector('#app');
+
+    const token = localStorage.getItem('tmdb_token');
+    if (token) {
+      window.location.href = '/#/list';
+      return;
+    }
+
+    this.render();
+  }
+
+  render() {
+    this.el.innerHTML = `
+    <div class="container-fluid">
+      ${ViewForm()}
+    </div>
+    `;
+    this.run();
+  }
+
+  async validateToken(token) {
+    try {
+      const response = await axios.get('https://api.themoviedb.org/3/movie/popular', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          accept: 'application/json'
+        }
+      });
+      console.log('API Response:', response);
+      return response.status === 200;
+    } catch (error) {
+      console.log('Token validation failed:', error.response?.data);
+      return false;
+    }
+  }
+
+  run() {
+    const form = document.querySelector('form');
+    const input = document.querySelector('#token');
+
+    if (!form || !input) {
+      console.error('Form elements not found');
+      return;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const token = input.value;
+
+      const isValid = await this.validateToken(token);
+      console.log('Token validation result:', isValid);
+
+      if (isValid) {
+        localStorage.setItem('tmdb_token', token);
+        window.location.href = '/#/list';
+      } else {
+        input.classList.add('is-invalid');
+        const feedback = document.querySelector('.invalid-feedback');
+        if (feedback) feedback.remove();
+        input.insertAdjacentHTML(
+          'afterend',
+          '<div class="invalid-feedback">Token invalide</div>'
+        );
+      }
+    });
+  }
+};
+
+export default LoginUser;
