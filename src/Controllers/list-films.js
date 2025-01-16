@@ -1,16 +1,11 @@
-import axios from 'axios';
-
 import ViewNav from '../Views/list-films/nav';
-import ViewUsers from '../Views/list-films';
+import ViewFilms from '../Views/list-films';
 
-const apiKey = document.querySelector('#token');
-const url = 'https://api.themoviedb.org/3/movie/popular';
-
-const ListUsers = class ListUsers {
+const ListFilms = class ListFilms {
   constructor(params) {
     this.el = document.querySelector('#app');
     this.params = params;
-    this.users = [];
+    this.Films = [];
 
     this.run();
   }
@@ -21,41 +16,41 @@ const ListUsers = class ListUsers {
     elSearchInput.addEventListener('keyup', (event) => {
       const value = event.target.value.toLocaleLowerCase();
 
-      const users = this.users.filter(
+      const Films = this.Films.filter(
         (user) => user.name.first.toLocaleLowerCase().search(value) >= 0
       );
 
-      const elContainer = this.el.querySelector('#users');
-      elContainer.innerHTML = ViewUsers(users);
+      const elContainer = this.el.querySelector('#Films');
+      elContainer.innerHTML = ViewFilms(Films);
     });
   }
 
   render() {
     return `
       ${ViewNav()}
-      <div id="users" class="container-fluid">
-        ${ViewUsers(this.users)}
+      <div id="Films" class="container-fluid">
+        ${ViewFilms(this.Films)}
       </div>
     `;
   }
 
   async run() {
-    try {
-      const response = await axios.get(url, {
-        params: {
-          api_key: apiKey,
-          language: 'fr-FR',
-          page: '1'
-        }
-      });
+    const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('tmdb_token')}`
+      }
+    };
 
-      this.users = response.data.results;
-      this.el.innerHTML = this.render();
-      this.onKeyPress();
-    } catch (error) {
-      console.error('API Error:', error.response?.data || error.message);
-    }
+    fetch(url, options)
+      .then((res) => res.json())
+      .then((json) => console.log(json))
+      .catch((err) => console.error(err));
+
+    this.el.innerHTML = this.render();
   }
 };
 
-export default ListUsers;
+export default ListFilms;

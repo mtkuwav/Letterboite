@@ -8,7 +8,7 @@ const LoginUser = class LoginUser {
 
     const token = localStorage.getItem('tmdb_token');
     if (token) {
-      window.location.href = '/#/list';
+      window.location.href = '/list-films';
       return;
     }
 
@@ -58,7 +58,7 @@ const LoginUser = class LoginUser {
 
       if (isValid) {
         localStorage.setItem('tmdb_token', token);
-        window.location.href = '/#/list';
+        window.location.href = '/list-films';
       } else {
         input.classList.add('is-invalid');
         const feedback = document.querySelector('.invalid-feedback');
