@@ -134,4 +134,66 @@ run() {
 }
 ```
 
+## Correction des erreurs
+**Cette fois quand j'entre un token invalide, je suis quand même redirigé. Pourquoi ?**
+
+
+## Réponse
+### Plan
+1. Debug le flux de validation
+2. Ajouter des logs
+3. Corriger la gestion des erreurs dans validateToken
+
+```javascript
+
+
+async validateToken(token) {
+  try {
+    const response = await axios.get('https://api.themoviedb.org/3/movie/popular', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        accept: 'application/json'
+      }
+    });
+    console.log('API Response:', response);
+    return response.status === 200;
+  } catch (error) {
+    console.log('Token validation failed:', error.response?.data);
+    return false;
+  }
+}
+
+run() {
+  const form = document.querySelector('form');
+  const input = document.querySelector('#token');
+
+  if (!form || !input) {
+    console.error('Form elements not found');
+    return;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const token = input.value;
+    
+    const isValid = await this.validateToken(token);
+    console.log('Token validation result:', isValid);
+
+    if (isValid) {
+      localStorage.setItem('tmdb_token', token);
+      window.location.href = '/#/list';
+    } else {
+      input.classList.add('is-invalid');
+      const feedback = document.querySelector('.invalid-feedback');
+      if (feedback) feedback.remove();
+      input.insertAdjacentHTML('afterend', 
+        '<div class="invalid-feedback">Token invalide</div>'
+      );
+    }
+  });
+}
+```
+
+Le problème venait probablement du fait que l'erreur était silencieusement avalée dans le catch. Maintenant on log les erreurs et on s'assure que le retour false est bien pris en compte.
+
 ---
