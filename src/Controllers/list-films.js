@@ -44,11 +44,11 @@ const ListFilms = class ListFilms {
       }
     };
 
-    fetch(url, options)
-      .then((res) => res.json())
-      .then((json) => console.log(json))
-      .catch((err) => console.error(err));
+    const response = await fetch(url, options);
+    const data = await response.json();
+    this.Films = data.results;
 
+    console.log('this.Films: ', this.Films);
     this.el.innerHTML = this.render();
   }
 };
