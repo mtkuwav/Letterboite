@@ -11,7 +11,7 @@ const film = (data) => {
         <img src="https://image.tmdb.org/t/p/w500/${posterPath}" class="card-img-top" alt="poster">
         <div class="card-body text-center">
           <h5 class="card-title">${title}</h5>
-          <p>Date de sortie: ${releaseDate}</p>
+          <p>Date de sortie: ${new Date(releaseDate).toLocaleDateString('fr')}</p>
         </div>
       </div>
     </div>
