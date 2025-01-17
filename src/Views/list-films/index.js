@@ -2,7 +2,8 @@ const film = (data) => {
   const {
     title,
     poster_path: posterPath,
-    release_date: releaseDate
+    release_date: releaseDate,
+    id
   } = data;
 
   return (`
@@ -11,7 +12,11 @@ const film = (data) => {
         <img src="https://image.tmdb.org/t/p/w500/${posterPath}" class="card-img-top" alt="poster">
         <div class="card-body text-center">
           <h5 class="card-title">${title}</h5>
-          <p>Date de sortie: ${releaseDate}</p>
+          <p>Date de sortie: ${new Date(releaseDate).toLocaleDateString('fr')}</p>
+          <a
+            href="/film?id=${id}"
+            class="btn btn-primary"
+          >Voir plus</a>
         </div>
       </div>
     </div>

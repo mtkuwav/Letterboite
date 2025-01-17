@@ -32,10 +32,9 @@ const LoginUser = class LoginUser {
           accept: 'application/json'
         }
       });
-      console.log('API Response:', response);
       return response.status === 200;
     } catch (error) {
-      console.log('Token validation failed:', error.response?.data);
+      alert(`Token validation failed: ${error.message}. Try with another.`);
       return false;
     }
   }
@@ -54,7 +53,6 @@ const LoginUser = class LoginUser {
       const token = input.value;
 
       const isValid = await this.validateToken(token);
-      console.log('Token validation result:', isValid);
 
       if (isValid) {
         localStorage.setItem('tmdb_token', token);
