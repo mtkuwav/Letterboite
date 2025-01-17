@@ -5,9 +5,23 @@ const Film = class Film {
     this.el = document.querySelector('#app');
     this.params = params;
 
-    console.log('hello');
-
     this.run();
+  }
+
+  setupLanguageSelector() {
+    const languageItems = document.querySelectorAll('[data-lang]');
+    const languageButton = document.querySelector('#languageSelector');
+
+    languageItems.forEach((item) => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const { lang } = e.target.dataset;
+        localStorage.setItem('language', lang);
+        languageButton.textContent = e.target.textContent;
+        this.currentLang = lang;
+        window.location.reload();
+      });
+    });
   }
 
   render() {
@@ -19,19 +33,19 @@ const Film = class Film {
       overview,
       tagline
     } = this.Film;
-    return `
+    this.el.innerHTML = `
       <div class="container-fluid">
         ${ViewFilm(title, releaseDate, posterPath, originCountry, overview, tagline)}
       </div>
     `;
+
+    this.setupLanguageSelector();
   }
 
   async run() {
     const { id } = this.params;
 
-    console.log(id);
-
-    const url = `https://api.themoviedb.org/3/movie/${id}?language=fr-FR`;
+    const url = `https://api.themoviedb.org/3/movie/${id}?language=${localStorage.getItem('language')}`;
     const options = {
       method: 'GET',
       headers: {
@@ -45,7 +59,7 @@ const Film = class Film {
       const data = await response.json();
       this.Film = data;
       console.log('Données du film :', this.Film);
-      this.el.innerHTML = this.render();
+      this.render();
     } catch (error) {
       console.error('Error fetching movie details:', error);
     }

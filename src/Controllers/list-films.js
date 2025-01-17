@@ -4,6 +4,7 @@ import ViewFilms from '../Views/list-films';
 const ListFilms = class ListFilms {
   constructor(params) {
     this.el = document.querySelector('#app');
+    this.currentLang = localStorage.getItem('language');
     this.params = params;
     this.Films = [];
 
@@ -25,17 +26,35 @@ const ListFilms = class ListFilms {
     });
   }
 
+  setupLanguageSelector() {
+    const languageItems = document.querySelectorAll('[data-lang]');
+    const languageButton = document.querySelector('#languageSelector');
+
+    languageItems.forEach((item) => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const { lang } = e.target.dataset;
+        localStorage.setItem('language', lang);
+        languageButton.textContent = e.target.textContent;
+        this.currentLang = lang;
+        window.location.reload();
+      });
+    });
+  }
+
   render() {
-    return `
+    this.el.innerHTML = `
       ${ViewNav()}
       <div id="Films" class="container-fluid">
         ${ViewFilms(this.Films)}
       </div>
     `;
+
+    this.setupLanguageSelector();
   }
 
   async run() {
-    const url = 'https://api.themoviedb.org/3/trending/movie/day?language=fr-FR';
+    const url = `https://api.themoviedb.org/3/trending/movie/day?language=${localStorage.getItem('language')}`;
     const options = {
       method: 'GET',
       headers: {
@@ -49,7 +68,7 @@ const ListFilms = class ListFilms {
     this.Films = data.results;
 
     console.log('this.Films: ', this.Films);
-    this.el.innerHTML = this.render();
+    this.render();
   }
 };
 
