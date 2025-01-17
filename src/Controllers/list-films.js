@@ -35,7 +35,7 @@ const ListFilms = class ListFilms {
   }
 
   async run() {
-    const url = 'https://api.themoviedb.org/3/trending/movie/day?language=en-US';
+    const url = 'https://api.themoviedb.org/3/trending/movie/day?language=fr-FR';
     const options = {
       method: 'GET',
       headers: {

@@ -11,10 +11,17 @@ const Film = class Film {
   }
 
   render() {
-    const { title, release_date: releaseDate, poster_path: posterPath } = this.Film;
+    const {
+      title,
+      release_date: releaseDate,
+      poster_path: posterPath,
+      origin_country: originCountry,
+      overview,
+      tagline
+    } = this.Film;
     return `
       <div class="container-fluid">
-        ${ViewFilm(title, releaseDate, posterPath)}
+        ${ViewFilm(title, releaseDate, posterPath, originCountry, overview, tagline)}
       </div>
     `;
   }
@@ -24,7 +31,7 @@ const Film = class Film {
 
     console.log(id);
 
-    const url = `https://api.themoviedb.org/3/movie/${id}?language=en-US`;
+    const url = `https://api.themoviedb.org/3/movie/${id}?language=fr-FR`;
     const options = {
       method: 'GET',
       headers: {
@@ -37,6 +44,7 @@ const Film = class Film {
       const response = await fetch(url, options);
       const data = await response.json();
       this.Film = data;
+      console.log('Données du film :', this.Film);
       this.el.innerHTML = this.render();
     } catch (error) {
       console.error('Error fetching movie details:', error);
