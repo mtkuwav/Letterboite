@@ -1,6 +1,6 @@
 import Router from './router';
 import ControllerListFilms from './Controllers/list-films';
-import ControllerUsers from './Controllers/user';
+import ControllerFilm from './Controllers/film';
 import ControllerLogin from './Controllers/login';
 
 import './index.scss';
@@ -12,8 +12,8 @@ const routes = [{
   url: '/list-films',
   controller: ControllerListFilms
 }, {
-  url: '/user',
-  controller: ControllerUsers
+  url: '/film',
+  controller: ControllerFilm
 }];
 
 const token = localStorage.getItem('tmdb_token');

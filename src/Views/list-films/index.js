@@ -2,7 +2,8 @@ const film = (data) => {
   const {
     title,
     poster_path: posterPath,
-    release_date: releaseDate
+    release_date: releaseDate,
+    id
   } = data;
 
   return (`
@@ -12,6 +13,10 @@ const film = (data) => {
         <div class="card-body text-center">
           <h5 class="card-title">${title}</h5>
           <p>Date de sortie: ${new Date(releaseDate).toLocaleDateString('fr')}</p>
+          <a
+            href="/film?id=${id}"
+            class="btn btn-primary"
+          >Voir plus</a>
         </div>
       </div>
     </div>

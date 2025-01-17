@@ -197,3 +197,95 @@ run() {
 Le problème venait probablement du fait que l'erreur était silencieusement avalée dans le catch. Maintenant on log les erreurs et on s'assure que le retour false est bien pris en compte.
 
 ---
+___
+
+## Prompt :
+**J'aimerais faire en sorte que lorsque l'on clique sur le bouton "voir plus" quand on est sur /list-user, cela amène l'utilisateur vers une page contenant les infos détaillées par du film en question. J'arrive bien à récupérer l'ID puisqu'il s'affiche dans l'url, mais lorsque j'y accède j'ai une page blanche et je ne vois aucun log dans la console. J'imagine que je ne suis pas bien redirigé, comment puis-je corriger cela ?**
+
+
+## Réponse
+### Plan
+1. Corriger les routes dans src/index.js
+2. Ajuster le lien dans la vue des films
+3. Corriger le Controller Film pour afficher les détails
+
+### Solution
+
+1. Corriger src/index.js
+
+
+```javascript
+const routes = [{
+  url: '/login',
+  controller: ControllerLogin
+}, {
+  url: '/list-films',
+  controller: ControllerListFilms
+}, {
+  url: '/film',  // Remove #
+  controller: ControllerFilm
+}];
+```
+
+2. Ajuster src/Views/list-films/index.js
+
+
+```javascript
+return (`
+  <div class="col-2 mt-4" id="Films">
+    <div class="card">
+      <img src="https://image.tmdb.org/t/p/w500/${posterPath}" class="card-img-top" alt="poster">
+      <div class="card-body text-center">
+        <h5 class="card-title">${title}</h5>
+        <p>Date de sortie: ${new Date(releaseDate).toLocaleDateString('fr')}</p>
+        <a
+          href="/film?id=${id}"
+          class="btn btn-primary"
+        >Voir plus</a>
+      </div>
+    </div>
+  </div>
+`);
+```
+
+3. Corriger src/Controllers/film.js
+
+
+```javascript
+render() {
+  const { title, release_date: releaseDate, poster_path: posterPath } = this.Film;
+  return `
+    <div class="container-fluid">
+      ${ViewFilm(title, releaseDate, posterPath)}
+    </div>
+  `;
+}
+
+async run() {
+  const { id } = this.params;
+  
+  const url = `https://api.themoviedb.org/3/movie/${id}?language=fr-FR`;
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('tmdb_token')}`
+    }
+  };
+
+  try {
+    const response = await fetch(url, options);
+    const data = await response.json();
+    this.Film = data;
+    this.el.innerHTML = this.render();
+  } catch (error) {
+    console.error('Error fetching movie details:', error);
+  }
+}
+```
+
+Les changements clés:
+- Suppression des # dans les URLs
+- Correction du traitement des données dans le controller Film
+- Meilleure gestion des erreurs
+- Correction du render pour utiliser les bonnes propriétés du film
