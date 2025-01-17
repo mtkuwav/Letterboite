@@ -12,7 +12,10 @@ export default (title, releaseDate, posterPath, originCountry, overview, tagline
         <li class="list-group-item">Pays d'origine : ${originCountry}</li>
         <li class="list-group-item text-body-emphasis">"${tagline}"</li>
       </ul>
-      <button class="btn btn-primary btn-lg" type="button">Example button</button>
+      <a
+        href="/list-films"
+        class="btn btn-primary btn-lg w-100 mt-3"
+      >Retour</a>
     </div>
   </div>
 `;

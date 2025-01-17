@@ -1,6 +1,13 @@
 export default () => {
-  const currentLang = localStorage.getItem('language') || 'fr';
-  const langText = currentLang === 'fr' ? 'Français' : 'English';
+  const languageMap = {
+    'fr-FR': '🇫🇷 Français',
+    'en-US': '🇺🇸 English',
+    'de-DE': '🇩🇪 Deutsch',
+    'es-ES': '🇪🇸 Español'
+  };
+
+  const currentLang = localStorage.getItem('language') || 'fr-FR';
+  const langText = languageMap[currentLang] || languageMap['fr-FR'];
 
   return `
   <nav class="navbar navbar-expand-lg text-light bg-dark border-bottom border-body">
@@ -25,8 +32,10 @@ export default () => {
           ${langText}
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageSelector">
-          <li><a class="dropdown-item" href="" data-lang="fr-FR">Français</a></li>
-          <li><a class="dropdown-item" href="" data-lang="en-US">English</a></li>
+          <li><a class="dropdown-item" href="" data-lang="fr-FR">🇫🇷 Français</a></li>
+          <li><a class="dropdown-item" href="" data-lang="en-US">🇺🇸 English</a></li>
+          <li><a class="dropdown-item" href="" data-lang="de-DE">🇩🇪 Deutsch</a></li>
+          <li><a class="dropdown-item" href="" data-lang="es-ES">🇪🇸 Español</a></li>
         </ul>
       </div>
     </div>
