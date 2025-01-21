@@ -38,13 +38,33 @@ const ListFilms = class ListFilms {
       navigateToPage(currentPage - 1);
     });
 
-    elSearchInput.addEventListener('keyup', (event) => {
+    elSearchInput.addEventListener('keyup', async (event) => {
       const value = event.target.value.toLowerCase();
-      const filteredFilms = this.Films.filter((film) => film.title
-        .toLowerCase()
-        .includes(value));
-      this.el.querySelector('#Films').innerHTML = ViewFilms(filteredFilms);
+      if (value.lenght < 2) return;
+
+      try {
+        this.el.querySelector('#Films').innerHTML = '<div class="loading">Searching...</div>';
+        const results = await this.searchMovies(value);
+        this.el.querySelector('#Films').innerHTML = ViewFilms(results);
+      } catch (error) {
+        this.el.querySelector('#Films').innerHTML = '<div class="error">Search failed. Please try again.</div>';
+        console.error('Search error:', error);
+      }
     });
+  }
+
+  async searchMovies(query) {
+    const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`;
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('tmdb_token')}`
+      }
+    };
+    const response = await fetch(url, options);
+    const data = await response.json();
+    return data.results;
   }
 
   setupLanguageSelector() {
