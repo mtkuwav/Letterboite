@@ -289,3 +289,193 @@ Les changements clés:
 - Correction du traitement des données dans le controller Film
 - Meilleure gestion des erreurs
 - Correction du render pour utiliser les bonnes propriétés du film
+
+
+___
+___
+
+
+## Prompt :
+**Comment faire un sélecteur de langue pour mon site ?**
+
+## Réponse :
+### Plan
+1. Créer une fonction pour gérer le changement de langue
+2. Sauvegarder la langue choisie dans localStorage
+3. Appliquer la langue au chargement
+4. Mettre à jour le dropdown dans 
+
+nav.js
+
+
+
+```javascript
+export default () => `
+  <nav class="navbar navbar-expand-lg text-light bg-dark">
+    <div class="container-fluid">
+      // ...existing code...
+      
+      <div class="dropdown">
+        <button 
+          class="btn btn-secondary dropdown-toggle" 
+          type="button" 
+          id="languageSelector" 
+          data-bs-toggle="dropdown" 
+          aria-expanded="false"
+        >
+          ${localStorage.getItem('language') || 'Français'}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageSelector">
+          <li><a class="dropdown-item" href="#" data-lang="fr">Français</a></li>
+          <li><a class="dropdown-item" href="#" data-lang="en">English</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+`;
+```
+
+```javascript
+class ListFilms {
+  constructor() {
+    // ...existing code...
+    this.setupLanguageSelector();
+  }
+
+  setupLanguageSelector() {
+    const languageItems = document.querySelectorAll('[data-lang]');
+    languageItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const lang = e.target.dataset.lang;
+        localStorage.setItem('language', lang);
+        window.location.reload();
+      });
+    });
+  }
+  
+  // ...existing code...
+}
+```
+
+Les changements clés:
+- Dropdown Bootstrap pour sélection langue
+- Sauvegarde dans localStorage
+- Event listeners pour changement de langue
+- Affichage de la langue active
+
+
+## Affinage de du prompt : 
+**Rien ne se passe quand je sélectionne la langue avec le bouton associé. Pourquoi ?**
+
+## Réponse :
+### Plan
+1. Vérifier que le sélecteur de langue est initialisé
+2. Ajouter console.log pour debug
+3. Déplacer setupLanguageSelector après le rendu
+
+```javascript
+class ListFilms {
+  constructor() {
+    this.el = document.querySelector('#app');
+    this.render();
+    this.run();
+  }
+
+  render() {
+    this.el.innerHTML = `
+      ${ViewNav()}
+      <div class="container-fluid">
+        ${ViewUsers(this.users)}
+      </div>
+    `;
+    this.setupLanguageSelector(); // Déplacé ici après le rendu
+  }
+
+  setupLanguageSelector() {
+    const languageItems = document.querySelectorAll('[data-lang]');
+    console.log('Language items found:', languageItems.length); // Debug
+
+    languageItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const { lang } = e.target.dataset;
+        console.log('Language selected:', lang); // Debug
+        localStorage.setItem('language', lang);
+        window.location.reload();
+      });
+    });
+  }
+
+  // ...existing code...
+}
+```
+
+## Prompt : 
+**Cette fois cela fonctionne, mais cela indique undefined pour le langage sélectionné**
+
+## Réponse :
+### Plan
+1. Initialiser une langue par défaut
+2. Mettre à jour le texte du bouton
+3. Gérer l'affichage de la langue sélectionnée
+
+```javascript
+class ListFilms {
+  constructor() {
+    this.el = document.querySelector('#app');
+    this.currentLang = localStorage.getItem('language') || 'fr';
+    this.render();
+    this.run();
+  }
+
+  setupLanguageSelector() {
+    const languageItems = document.querySelectorAll('[data-lang]');
+    const languageButton = document.querySelector('#languageSelector');
+
+    languageItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const { lang } = e.target.dataset;
+        localStorage.setItem('language', lang);
+        languageButton.textContent = e.target.textContent;
+        this.currentLang = lang;
+      });
+    });
+  }
+}
+```
+
+```javascript
+export default () => {
+  const currentLang = localStorage.getItem('language') || 'fr';
+  const langText = currentLang === 'fr' ? 'Français' : 'English';
+  
+  return `
+    <nav class="navbar navbar-expand-lg text-light bg-dark">
+      // ...existing code...
+      <div class="dropdown">
+        <button 
+          class="btn btn-secondary dropdown-toggle" 
+          type="button" 
+          id="languageSelector" 
+          data-bs-toggle="dropdown" 
+          aria-expanded="false"
+        >
+          ${langText}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageSelector">
+          <li><a class="dropdown-item" href="#" data-lang="fr">Français</a></li>
+          <li><a class="dropdown-item" href="#" data-lang="en">English</a></li>
+        </ul>
+      </div>
+      // ...existing code...
+    </nav>
+  `;
+};
+```
+
+___
+___
+
+
