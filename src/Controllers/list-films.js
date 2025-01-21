@@ -77,7 +77,8 @@ const ListFilms = class ListFilms {
   }
 
   async run() {
-    const url = `https://api.themoviedb.org/3/movie/popular?language=${localStorage.getItem('language')}&page=${this.params.page}`;
+    const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=${localStorage.getItem('language')}&page=${this.params.page}&sort_by=popularity.desc`;
+    // const url = `https://api.themoviedb.org/3/movie/popular?language=${localStorage.getItem('language')}&page=${this.params.page}`;
     const options = {
       method: 'GET',
       headers: {
