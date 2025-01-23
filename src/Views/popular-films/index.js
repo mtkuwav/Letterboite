@@ -7,7 +7,7 @@ const film = (data) => {
   } = data;
 
   return (`
-    <div class="col-2 mt-4" id="Films">
+    <div class="col-3 mt-4" id="Films">
       <div class="card">
         <img src="https://image.tmdb.org/t/p/w500/${posterPath}" class="card-img-top" alt="poster">
         <div class="card-body text-center">

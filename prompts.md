@@ -479,3 +479,60 @@ ___
 ___
 
 
+## Prompt :
+Comment faire en sorte que la barre de recherche fasse une recherche globale et non plus sur le contenu de this.Films, en implémentant cette requête (qui utilise comme corps de la recherche "Jack Reacher" en tant qu'exemple) :
+curl --request GET \
+     --url 'https://api.themoviedb.org/3/search/movie?query=Jack+Reacher' \
+     --header 'Authorization: Bearer *Ma clé API*'
+
+## Réponse :
+Let's modify the search functionality to use TMDB API instead of filtering local data:
+
+1. Create API search function
+2. Modify keyup event listener to use API search
+3. Add loading state and error handling
+4. Update results display
+
+```javascript
+
+
+// Add this method to the class
+async searchMovies(query) {
+  const apiUrl = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`;
+  const response = await fetch(apiUrl, {
+    headers: {
+      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0MTMzZTcyNjIyYWQ1YmNkNDk2NTcwOTM2OGFmYmY2MCIsIm5iZiI6MTczNjg0NDM0NS4yMzcsInN1YiI6IjY3ODYyNDM5NjJlOGZhNjI5ZGJiMDM1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BMxp5t4jKsK6S3uixyKvidXpJRkDjXqDNUHCQtlUpSw'
+    }
+  });
+  const data = await response.json();
+  return data.results;
+}
+
+// Replace the existing keyup event listener with this:
+elSearchInput.addEventListener('keyup', async (event) => {
+  const value = event.target.value.toLowerCase();
+  if (value.length < 2) return; // Don't search for very short queries
+
+  try {
+    this.el.querySelector('#Films').innerHTML = '<div class="loading">Searching...</div>';
+    const results = await this.searchMovies(value);
+    this.el.querySelector('#Films').innerHTML = ViewFilms(results);
+  } catch (error) {
+    this.el.querySelector('#Films').innerHTML = '<div class="error">Search failed. Please try again.</div>';
+    console.error('Search error:', error);
+  }
+});
+```
+
+This implementation:
+- Creates a new `searchMovies` method to handle API calls
+- Updates the search input handler to use async/await
+- Adds basic error handling and loading state
+- Only searches when query is at least 2 characters
+- Uses the same ViewFilms component to display results
+
+Note: Make sure your ViewFilms component can handle the TMDB API response format, which might be different from your current film data structure.
+
+
+___
+___
