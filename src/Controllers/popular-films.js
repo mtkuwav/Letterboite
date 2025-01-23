@@ -40,7 +40,10 @@ const PopularFilms = class PopularFilms {
 
     elSearchInput.addEventListener('keyup', async (event) => {
       const value = event.target.value.toLowerCase();
-      if (value.lenght < 2) return;
+      if (!value) {
+        this.el.querySelector('#Films').innerHTML = ViewFilms(this.Films);
+        return;
+      }
 
       try {
         this.el.querySelector('#Films').innerHTML = '<div class="loading">Searching...</div>';
