@@ -16,7 +16,7 @@ export default () => {
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-        <a class="navbar-brand text-light" href="#">Letterboîte</a>
+        <a class="navbar-brand text-light" href="/popular-films">Letterboîte</a>
         <form class="d-flex" role="search">
           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
         </form>
