@@ -1,8 +1,8 @@
-import ViewNav from '../Views/list-films/nav';
-import ViewFilms from '../Views/list-films';
-import ViewNumberPage from '../Views/list-films/nav-page';
+import ViewNav from '../Views/popular-films/nav';
+import ViewFilms from '../Views/popular-films';
+import ViewNumberPage from '../Views/popular-films/nav-page';
 
-const ListFilms = class ListFilms {
+const PopularFilms = class PopularFilms {
   constructor(params) {
     this.el = document.querySelector('#app');
     this.currentLang = localStorage.getItem('language');
@@ -10,7 +10,7 @@ const ListFilms = class ListFilms {
     this.Films = [];
 
     if (!this.params.page) {
-      window.location.href = '/list-films?page=1';
+      window.location.href = '/popular-films?page=1';
       return;
     }
 
@@ -25,7 +25,7 @@ const ListFilms = class ListFilms {
     const navigateToPage = (newPage) => {
       if (newPage < 1) return;
       elPageNumber.textContent = newPage;
-      window.location.href = `/list-films?page=${newPage}`;
+      window.location.href = `/popular-films?page=${newPage}`;
     };
 
     document.querySelector('#nextPage').addEventListener('click', (event) => {
@@ -96,4 +96,4 @@ const ListFilms = class ListFilms {
   }
 };
 
-export default ListFilms;
+export default PopularFilms;

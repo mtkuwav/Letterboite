@@ -13,7 +13,7 @@ export default (title, releaseDate, posterPath, originCountry, overview, tagline
         <li class="list-group-item text-body-emphasis">"${tagline}"</li>
       </ul>
       <a
-        href="/list-films"
+        href="/popular-films"
         class="btn btn-primary btn-lg w-100 mt-3"
       >Retour</a>
     </div>

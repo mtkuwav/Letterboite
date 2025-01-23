@@ -1,5 +1,5 @@
 import Router from './router';
-import ControllerListFilms from './Controllers/list-films';
+import ControllerListFilms from './Controllers/popular-films';
 import ControllerFilm from './Controllers/film';
 import ControllerLogin from './Controllers/login';
 
@@ -9,7 +9,7 @@ const routes = [{
   url: '/login',
   controller: ControllerLogin
 }, {
-  url: '/list-films',
+  url: '/popular-films',
   controller: ControllerListFilms
 }, {
   url: '/film',
