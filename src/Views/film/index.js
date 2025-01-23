@@ -40,7 +40,7 @@ export default (title, releaseDate, posterPath, originCountry, overview, tagline
     <div class="p-5 mb-4 bg-body-tertiary rounded-3">
       <div class="container-fluid py-5">
         <h1 class="display-5 fw-bold">${text.info}</h1>
-        <img src="https://image.tmdb.org/text/p/w500/${posterPath}" class="card-img-top" alt="poster">
+        <img src="https://image.tmdb.org/t/p/original${posterPath}" class="card-img-top" alt="poster">
         <ul class="list-group">
           <li class="list-group-item">${text.releaseDate} : ${new Date(releaseDate).toLocaleDateString(currentLang)}</li>
           <li class="list-group-item">${text.summary} : ${overview}</li>
