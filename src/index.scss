@@ -13,3 +13,37 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Ubuntu', sans-serif;
   font-weight: 500;
 }
+
+.cards {
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  .card {
+    h5.card-title, 
+    h5.card-title:hover,
+    h5.card-title:visited,
+    h5.card-title:active {
+      text-decoration: none !important;
+      color: #000 !important;
+      cursor: default !important;
+    }
+    
+    p, 
+    p:hover,
+    p:visited,
+    p:active {
+      text-decoration: none !important;
+      color: #000 !important;
+      cursor: default !important;
+    }
+
+    a {
+      text-decoration: none !important;
+    }
+  }
+}
+
+.cards:hover {
+  box-shadow: 5px 6px 6px 2px #e9ecef;
+  transform: scale(1.05);
+}

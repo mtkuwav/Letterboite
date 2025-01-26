@@ -30,15 +30,20 @@ const film = (data) => {
 
   return (`
     <div class="col-3 mt-4" id="Films">
-      <div class="card">
-        <img src="https://image.tmdb.org/t/p/w500/${posterPath}" class="card-img-top" alt="poster">
-        <div class="card-body text-center">
-          <h5 class="card-title">${title}</h5>
-          <p>${text.releaseDate} : ${new Date(releaseDate).toLocaleDateString(localStorage.getItem('language'))}</p>
-          <a
-            href="/film?id=${id}"
-            class="btn btn-primary"
-          >${text.viewDetails}</a>
+      <div class="cards">
+        <div class="card">
+          <a href="/film?id=${id}">
+            <img src="https://image.tmdb.org/t/p/w500/${posterPath}" class="card-img-top" alt="poster">
+            <div class="card-body text-center">
+              <h5 class="card-title">${title}</h5>
+              <p>${text.releaseDate} : ${new Date(releaseDate).toLocaleDateString(localStorage.getItem('language'))}</p>
+              <a
+                href="/film?id=${id}"
+                class="btn btn-primary"
+              >${text.viewDetails}
+              </a>
+            </div>
+          </a>
         </div>
       </div>
     </div>
