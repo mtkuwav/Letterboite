@@ -1,9 +1,10 @@
-
+import ViewListsFilms from '../Views/list-films/index';
 
 const ListsFilms = class ListsFilms {
   constructor() {
     this.el = document.querySelector('#app');
-    this.lists = getAllLists();
+    this.initializeStorage();
+    this.lists = this.getAllLists();
     this.render();
     this.run();
   }
@@ -30,7 +31,7 @@ const ListsFilms = class ListsFilms {
       throw new Error('List does not exist');
     }
     // Check if film already exists in list
-    const filmExists = lists[listName].some(f => f.id === film.id);
+    const filmExists = lists[listName].some((f) => f.id === film.id);
     if (!filmExists) {
       lists[listName].push(film);
       this.saveLists(lists);
@@ -42,7 +43,7 @@ const ListsFilms = class ListsFilms {
     if (!lists[listName]) {
       throw new Error('List does not exist');
     }
-    lists[listName] = lists[listName].filter(film => film.id !== filmId);
+    lists[listName] = lists[listName].filter((film) => film.id !== filmId);
     this.saveLists(lists);
   }
 
@@ -61,7 +62,7 @@ const ListsFilms = class ListsFilms {
   }
 
   getAllLists() {
-    return JSON.parse(localStorage.getItem('filmLists'));
+    return JSON.parse(localStorage.getItem('filmLists') || '{}');
   }
 
   saveLists(lists) {
@@ -71,7 +72,7 @@ const ListsFilms = class ListsFilms {
   render() {
     this.el.innerHTML = `
       <div class="container-fluid">
-        ${ViewLists(this.lists)}
+        ${ViewListsFilms(this.lists)}
       </div>
     `;
   }
@@ -84,8 +85,8 @@ const ListsFilms = class ListsFilms {
         const listName = prompt('Enter list name:');
         if (listName) {
           try {
-            createList(listName);
-            this.lists = getAllLists();
+            this.createList(listName);
+            this.lists = this.getAllLists();
             this.render();
           } catch (error) {
             alert(error.message);
@@ -94,17 +95,18 @@ const ListsFilms = class ListsFilms {
       });
     }
 
-    document.querySelectorAll('.delete-list').forEach(btn => {
+    document.querySelectorAll('.delete-list').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         const { listName } = e.target.dataset;
-        if (confirm(`Delete list "${listName}"?`)) {
-          deleteList(listName);
-          this.lists = getAllLists();
+        // Using window.confirm to avoid eslint error
+        if (window.confirm(`Delete list "${listName}"?`)) {
+          this.deleteList(listName);
+          this.lists = this.getAllLists();
           this.render();
         }
       });
     });
   }
-}
+};
 
 export default ListsFilms;

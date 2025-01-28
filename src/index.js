@@ -1,7 +1,8 @@
 import Router from './router';
-import ControllerListFilms from './Controllers/popular-films';
+import ControllerPopularFilms from './Controllers/popular-films';
 import ControllerFilm from './Controllers/film';
 import ControllerLogin from './Controllers/login';
+import ControllerListsFilms from './Controllers/lists-films';
 
 import './index.scss';
 
@@ -10,10 +11,13 @@ const routes = [{
   controller: ControllerLogin
 }, {
   url: '/popular-films',
-  controller: ControllerListFilms
+  controller: ControllerPopularFilms
 }, {
   url: '/film',
   controller: ControllerFilm
+}, {
+  url: '/lists-films',
+  controller: ControllerListsFilms
 }];
 
 const token = localStorage.getItem('tmdb_token');

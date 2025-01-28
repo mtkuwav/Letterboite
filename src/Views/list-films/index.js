@@ -20,7 +20,7 @@ const ViewLists = (lists) => `
           <div class="card-body">
             <p>${films.length} films</p>
             <ul class="list-group">
-              ${films.slice(0, 3).map(film => `
+              ${films.slice(0, 3).map((film) => `
                 <li class="list-group-item">${film.title}</li>
               `).join('')}
             </ul>
