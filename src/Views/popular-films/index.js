@@ -37,11 +37,23 @@ const film = (data) => {
             <div class="card-body text-center">
               <h5 class="card-title">${title}</h5>
               <p>${text.releaseDate} : ${new Date(releaseDate).toLocaleDateString(localStorage.getItem('language'))}</p>
-              <a
-                href="/film?id=${id}"
-                class="btn btn-primary"
-              >${text.viewDetails}
-              </a>
+              <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" 
+                  type="button" 
+                  id="dropdownMenu${id}" 
+                  data-bs-toggle="dropdown" 
+                  aria-expanded="false">
+                  Add to list
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu${id}" data-film-id="${id}">
+                  <li><a class="dropdown-item create-list" href="#">Create new list</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  ${Object.keys(JSON.parse(localStorage.getItem('filmLists') || '{}')).map((listName) => `
+                    <li><a class="dropdown-item add-to-list" data-list="${listName}" href="#">${listName}</a></li>
+                  `).join('')}
+              </ul>
+              </div>
+              <a href="/film?id=${id}" class="btn btn-primary">${text.viewDetails}</a>
             </div>
           </a>
         </div>

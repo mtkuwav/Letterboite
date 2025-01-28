@@ -1,6 +1,7 @@
 import ViewNav from '../Views/popular-films/nav';
 import ViewFilms from '../Views/popular-films';
 import ViewNumberPage from '../Views/popular-films/nav-page';
+import ControllerListsFilms from './lists-films';
 
 const PopularFilms = class PopularFilms {
   constructor(params) {
@@ -86,6 +87,42 @@ const PopularFilms = class PopularFilms {
     });
   }
 
+  setupListManagement() {
+    document.querySelectorAll('.create-list').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const listName = prompt('Enter list name:');
+        if (listName) {
+          try {
+            ControllerListsFilms.createList(listName);
+            this.render();
+          } catch (error) {
+            alert(error.message);
+          }
+        }
+      });
+    });
+
+    document.querySelectorAll('.add-to-list').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const { list } = e.target.dataset;
+        const { filmId } = e.target.closest('.dropdown-menu').dataset;
+
+        const film = this.Films.find((f) => f.id.toString() === filmId);
+        if (film) {
+          try {
+            const listsManager = new ControllerListsFilms();
+            listsManager.addFilmToList(list, film);
+            alert('Film added to list!');
+          } catch (error) {
+            alert(error.message);
+          }
+        }
+      });
+    });
+  }
+
   render() {
     this.el.innerHTML = `
       ${ViewNav()}
@@ -97,6 +134,7 @@ const PopularFilms = class PopularFilms {
 
     this.setupLanguageSelector();
     this.onKeyPress();
+    this.setupListManagement();
   }
 
   async run() {
