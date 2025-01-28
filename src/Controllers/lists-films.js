@@ -69,19 +69,9 @@ const ListsFilms = class ListsFilms {
     localStorage.setItem('filmLists', JSON.stringify(lists));
   }
 
-  render() {
-    this.el.innerHTML = `
-      <div class="container-fluid">
-        ${ViewListsFilms(this.lists)}
-      </div>
-    `;
-  }
-
-  run() {
-    // Add list button functionality
-    const addListBtn = document.querySelector('#addList');
-    if (addListBtn) {
-      addListBtn.addEventListener('click', () => {
+  setupEventListeners() {
+    this.el.addEventListener('click', (e) => {
+      if (e.target.matches('#addList')) {
         const listName = prompt('Enter list name:');
         if (listName) {
           try {
@@ -92,20 +82,29 @@ const ListsFilms = class ListsFilms {
             alert(error.message);
           }
         }
-      });
-    }
+      }
 
-    document.querySelectorAll('.delete-list').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
+      if (e.target.matches('.delete-list')) {
         const { listName } = e.target.dataset;
-        // Using window.confirm to avoid eslint error
         if (window.confirm(`Delete list "${listName}"?`)) {
           this.deleteList(listName);
           this.lists = this.getAllLists();
           this.render();
         }
-      });
+      }
     });
+  }
+
+  render() {
+    this.el.innerHTML = `
+      <div class="container-fluid">
+        ${ViewListsFilms(this.lists)}
+      </div>
+    `;
+  }
+
+  run() {
+    this.setupEventListeners();
   }
 };
 

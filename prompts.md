@@ -868,3 +868,74 @@ This implementation:
 - Uses Bootstrap for styling
 - Handles empty states
 - Confirms before deleting lists
+
+
+
+___
+___
+
+
+
+## Prompt :
+**Lorsque j'appuie sur le bouton create new list ou bien le bouton delete quand je viens de charger la page, cela ne fonctionne qu'une seule fois, après cela les boutons ne font plus rien**
+
+# Réponse :
+### Plan
+1. Problem: Event listeners are lost after render
+2. Solution: Move event listeners to separate method
+3. Call event listeners setup after each render
+4. Use event delegation for dynamic elements
+
+```javascript
+
+
+const ListsFilms = class ListsFilms {
+  constructor() {
+    this.el = document.querySelector('#app');
+    this.initializeStorage();
+    this.lists = this.getAllLists();
+    this.render();
+    this.setupEventListeners();
+  }
+
+  // ...existing code...
+
+  render() {
+    this.el.innerHTML = ViewListsFilms(this.lists);
+    this.setupEventListeners(); // Re-attach event listeners after render
+  }
+
+  setupEventListeners() {
+    // Use event delegation for dynamic elements
+    this.el.addEventListener('click', (e) => {
+      // Handle add list button
+      if (e.target.matches('#addList')) {
+        const listName = prompt('Enter list name:');
+        if (listName) {
+          try {
+            this.createList(listName);
+            this.lists = this.getAllLists();
+            this.render();
+          } catch (error) {
+            alert(error.message);
+          }
+        }
+      }
+
+      // Handle delete list button
+      if (e.target.matches('.delete-list')) {
+        const listName = e.target.dataset.listName;
+        if (window.confirm(`Delete list "${listName}"?`)) {
+          this.deleteList(listName);
+          this.lists = this.getAllLists();
+          this.render();
+        }
+      }
+    });
+  }
+
+  // Remove run() method as it's replaced by setupEventListeners
+}
+
+export default ListsFilms;
+```
