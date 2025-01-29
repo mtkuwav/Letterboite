@@ -6,8 +6,24 @@ export default () => {
     'es-ES': '🇪🇸 Español'
   };
 
+  const translations = {
+    'fr-FR': {
+      seeLists: 'Voir vos listes'
+    },
+    'en-US': {
+      seeLists: 'See your lists'
+    },
+    'de-DE': {
+      seeLists: 'Ihre Listen ansehen'
+    },
+    'es-ES': {
+      seeLists: 'Ver tus listas'
+    }
+  };
+
   const currentLang = localStorage.getItem('language') || 'fr-FR';
   const langText = languageMap[currentLang] || languageMap['fr-FR'];
+  const text = translations[currentLang];
 
   return `
   <nav class="navbar navbar-expand-lg text-light bg-dark border-bottom border-body">
@@ -17,10 +33,8 @@ export default () => {
       </button>
       <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
         <a class="navbar-brand text-light" href="/popular-films">Letterboîte</a>
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        </form>
       </div>
+      <a href="/lists-films"><button type="button" class="btn btn-success">${text.seeLists}</button></a>
       <div class="dropdown">
         <button 
           class="btn btn-secondary dropdown-toggle" 
