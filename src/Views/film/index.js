@@ -8,7 +8,8 @@ const translations = {
     originCountry: 'Pays d\'origine',
     back: 'Retour',
     addList: 'Ajouter à une liste',
-    addWatchlist: 'Ajouter à la Watchlist'
+    addWatchlist: 'Ajouter à la Watchlist',
+    removeWatchlist: 'Retirer de la watchlist'
   },
   'en-US': {
     info: 'Info!',
@@ -17,7 +18,8 @@ const translations = {
     originCountry: 'Origin country',
     back: 'Back',
     addList: 'Add to list',
-    addWatchlist: 'Add to watchlist'
+    addWatchlist: 'Add to watchlist',
+    removeWatchlist: 'Remove from watchlist'
   },
   'de-DE': {
     info: 'Info!',
@@ -26,7 +28,8 @@ const translations = {
     originCountry: 'Herkunftsland',
     back: 'Zurück',
     addList: 'Zur Liste hinzufügen',
-    addWatchlist: 'Zur Watchlist hinzufügen'
+    addWatchlist: 'Zur Watchlist hinzufügen',
+    removeWatchlist: 'Aus der Watchlist entfernen'
   },
   'es-ES': {
     info: '¡Información!',
@@ -35,7 +38,8 @@ const translations = {
     originCountry: 'País de origen',
     back: 'Volver',
     addList: 'Añadir a la lista',
-    addWatchlist: 'Añadir a la Watchlist'
+    addWatchlist: 'Añadir a la Watchlist',
+    removeWatchlist: 'Quitar de la Watchlist'
   }
 };
 
@@ -44,6 +48,7 @@ export default (title, releaseDate, posterPath, originCountry, overview, tagline
   const text = translations[currentLang];
 
   const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+  const isInWatchlist = lists.watchlist?.some((f) => f.id === id);
 
   return `
     ${ViewHeader(title)}
@@ -57,24 +62,32 @@ export default (title, releaseDate, posterPath, originCountry, overview, tagline
           ${originCountry ? `<li class="list-group-item">${text.originCountry} : ${originCountry}</li>` : ''}
           ${tagline ? `<li class="list-group-item text-body-emphasis">"${tagline}"</li>` : ''}
         </ul>
-        <div class="dropdown position-absolute end-0 m-2">
-            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-              ${text.addList}
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end" data-film-id="${id}">
-              ${Object.keys(lists).map((listName) => `
-                <li>
-                  <button class="dropdown-item add-to-list" data-list="${listName}">
-                    ${listName}
-                  </button>
-                </li>
-              `).join('')}
-              <li><hr class="dropdown-divider"></li>
+        <div class="dropdown">
+          <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            ${text.addList}
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" data-film-id="${id}">
+            ${Object.keys(lists).map((listName) => `
               <li>
-                <button class="dropdown-item create-list">Create new list</button>
+                <button class="dropdown-item add-to-list" data-list="${listName}">
+                  ${listName}
+                </button>
               </li>
-            </ul>
-          </div>
+            `).join('')}
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <button class="dropdown-item create-list">Create new list</button>
+            </li>
+          </ul>
+        </div>
+        <div class="d-flex gap-2 mb-3">
+          <button 
+            class="btn ${isInWatchlist ? 'btn-danger' : 'btn-success'} watchlist-btn" 
+            data-film-id="${id}"
+          >
+            ${isInWatchlist ? text.removeWatchlist : text.addWatchlist}
+          </button>
+        </div>
         <a
           href="/popular-films"
           class="btn btn-primary btn-lg w-100 mt-3"

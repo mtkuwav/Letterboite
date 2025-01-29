@@ -95,6 +95,28 @@ const ListsFilms = class ListsFilms {
     });
   }
 
+  toggleWatchlist(film) {
+    const lists = this.getAllLists();
+    if (!lists.watchlist) {
+      lists.watchlist = [];
+    }
+
+    const index = lists.watchlist.findIndex((f) => f.id === film.id);
+    if (index === -1) {
+      lists.watchlist.push(film);
+    } else {
+      lists.watchlist.splice(index, 1);
+    }
+
+    this.saveLists(lists);
+    return index === -1; // returns true if added, false if removed
+  }
+
+  isInWatchlist(filmId) {
+    const lists = this.getAllLists();
+    return lists.watchlist ? lists.watchlist.some((f) => f.id === filmId) : false;
+  }
+
   render() {
     this.el.innerHTML = `
       <div class="container-fluid">

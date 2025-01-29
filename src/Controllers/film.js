@@ -1,4 +1,24 @@
 import ViewFilm from '../Views/film';
+// import ListsFilms from './lists-films';
+
+const text = {
+  'fr-FR': {
+    addWatchlist: 'Ajouter à la Watchlist',
+    removeWatchlist: 'Retirer de la watchlist'
+  },
+  'en-US': {
+    addWatchlist: 'Add to watchlist',
+    removeWatchlist: 'Remove from watchlist'
+  },
+  'de-DE': {
+    addWatchlist: 'Zur Watchlist hinzufügen',
+    removeWatchlist: 'Aus der Watchlist entfernen'
+  },
+  'es-ES': {
+    addWatchlist: 'Añadir a la Watchlist',
+    removeWatchlist: 'Quitar de la Watchlist'
+  }
+};
 
 const Film = class Film {
   constructor(params) {
@@ -74,6 +94,38 @@ const Film = class Film {
     });
   }
 
+  setupWatchlistButton() {
+    const watchlistBtn = document.querySelector('.watchlist-btn');
+    const currentLang = localStorage.getItem('language') || 'fr-FR';
+
+    if (watchlistBtn) {
+      watchlistBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+        if (!lists.watchlist) {
+          lists.watchlist = [];
+        }
+
+        const index = lists.watchlist.findIndex((f) => f.id === this.Film.id);
+        if (index === -1) {
+          lists.watchlist.push(this.Film);
+          watchlistBtn.textContent = text[currentLang].removeWatchlist;
+          watchlistBtn.classList.remove('btn-success');
+          watchlistBtn.classList.add('btn-danger');
+        } else {
+          lists.watchlist.splice(index, 1);
+          watchlistBtn.textContent = text[currentLang].addWatchlist;
+          watchlistBtn.classList.remove('btn-danger');
+          watchlistBtn.classList.add('btn-success');
+        }
+
+        localStorage.setItem('filmLists', JSON.stringify(lists));
+      });
+    }
+  }
+
   render() {
     const {
       title,
@@ -92,6 +144,7 @@ const Film = class Film {
 
     this.setupLanguageSelector();
     this.setupListManagement();
+    this.setupWatchlistButton();
   }
 
   async run() {
