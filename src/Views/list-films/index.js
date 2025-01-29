@@ -1,4 +1,7 @@
+import ViewHeader from './header';
+
 const ViewLists = (lists) => `
+  ${ViewHeader()}
   <div class="row">
     <div class="col-12 mb-4">
       <h2>My Lists</h2>
