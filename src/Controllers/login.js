@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import ViewForm from '../Views/login/login';
 
 const LoginUser = class LoginUser {
@@ -8,7 +6,7 @@ const LoginUser = class LoginUser {
 
     const token = localStorage.getItem('tmdb_token');
     if (token) {
-      window.location.href = '/list-films';
+      window.location.href = '/popular-films';
       return;
     }
 
@@ -25,16 +23,26 @@ const LoginUser = class LoginUser {
   }
 
   async validateToken(token) {
+    const url = 'https://api.themoviedb.org/3/authentication';
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    };
+
     try {
-      const response = await axios.get('https://api.themoviedb.org/3/movie/popular', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          accept: 'application/json'
-        }
-      });
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.status_message || 'Authentication failed');
+      }
+
       return response.status === 200;
     } catch (error) {
-      alert(`Token validation failed: ${error.message}. Try with another.`);
+      console.error('Token validation failed:', error);
       return false;
     }
   }
@@ -56,7 +64,7 @@ const LoginUser = class LoginUser {
 
       if (isValid) {
         localStorage.setItem('tmdb_token', token);
-        window.location.href = '/list-films?page=1';
+        window.location.href = '/popular-films';
       } else {
         input.classList.add('is-invalid');
         const feedback = document.querySelector('.invalid-feedback');

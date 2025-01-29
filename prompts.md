@@ -479,3 +479,605 @@ ___
 ___
 
 
+## Prompt :
+Comment faire en sorte que la barre de recherche fasse une recherche globale et non plus sur le contenu de this.Films, en implémentant cette requête (qui utilise comme corps de la recherche "Jack Reacher" en tant qu'exemple) :
+curl --request GET \
+     --url 'https://api.themoviedb.org/3/search/movie?query=Jack+Reacher' \
+     --header 'Authorization: Bearer *Ma clé API*'
+
+## Réponse :
+Let's modify the search functionality to use TMDB API instead of filtering local data:
+
+1. Create API search function
+2. Modify keyup event listener to use API search
+3. Add loading state and error handling
+4. Update results display
+
+```javascript
+
+
+// Add this method to the class
+async searchMovies(query) {
+  const apiUrl = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`;
+  const response = await fetch(apiUrl, {
+    headers: {
+      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0MTMzZTcyNjIyYWQ1YmNkNDk2NTcwOTM2OGFmYmY2MCIsIm5iZiI6MTczNjg0NDM0NS4yMzcsInN1YiI6IjY3ODYyNDM5NjJlOGZhNjI5ZGJiMDM1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BMxp5t4jKsK6S3uixyKvidXpJRkDjXqDNUHCQtlUpSw'
+    }
+  });
+  const data = await response.json();
+  return data.results;
+}
+
+// Replace the existing keyup event listener with this:
+elSearchInput.addEventListener('keyup', async (event) => {
+  const value = event.target.value.toLowerCase();
+  if (value.length < 2) return; // Don't search for very short queries
+
+  try {
+    this.el.querySelector('#Films').innerHTML = '<div class="loading">Searching...</div>';
+    const results = await this.searchMovies(value);
+    this.el.querySelector('#Films').innerHTML = ViewFilms(results);
+  } catch (error) {
+    this.el.querySelector('#Films').innerHTML = '<div class="error">Search failed. Please try again.</div>';
+    console.error('Search error:', error);
+  }
+});
+```
+
+This implementation:
+- Creates a new `searchMovies` method to handle API calls
+- Updates the search input handler to use async/await
+- Adds basic error handling and loading state
+- Only searches when query is at least 2 characters
+- Uses the same ViewFilms component to display results
+
+Note: Make sure your ViewFilms component can handle the TMDB API response format, which might be different from your current film data structure.
+
+
+___
+___
+
+
+## Prompt : 
+**Comment implémenter un système de listes de films disponible hors connexion, en stockant ces listes dans une variable du stockage local afin de pouvoir y accéder hors connexion ? Pour rappel, un objet film a cette forme : 
+{
+  "adult": false,
+  "backdrop_path": "/zOpe0eHsq0A2NvNyBbtT6sj53qV.jpg",
+  "belongs_to_collection": {
+    "id": 720879,
+    "name": "Sonic - Saga",
+    "poster_path": "/suhMpYh76MjwtV1F0vszgDtdnSK.jpg",
+    "backdrop_path": "/l5CIAdxVhhaUD3DaS4lP4AR2so9.jpg"
+  },
+  "budget": 122000000,
+  "genres": [
+    {
+      "id": 28,
+      "name": "Action"
+    },
+    {
+      "id": 878,
+      "name": "Science-Fiction"
+    },
+    {
+      "id": 35,
+      "name": "Comédie"
+    },
+    {
+      "id": 10751,
+      "name": "Familial"
+    }
+  ],
+  "homepage": "",
+  "id": 939243,
+  "imdb_id": "tt18259086",
+  "origin_country": [
+    "US"
+  ],
+  "original_language": "en",
+  "original_title": "Sonic the Hedgehog 3",
+  "overview": "Sonic, Knuckles et Tails sont à nouveau réunis face à un puissant nouvel adversaire, Shadow, un mystérieux vilain doté de pouvoirs comme ils n'en ont encore jamais vu. Leurs habiletés étant toutes surclassées, l'Équipe Sonic doit tenter une alliance improbable dans l'espoir d'arrêter Shadow et de protéger la planète.",
+  "popularity": 7535.831,
+  "poster_path": "/ur92mtkb9mmejINZbmzolzeC8tE.jpg",
+  "production_companies": [
+    {
+      "id": 4,
+      "logo_path": "/gz66EfNoYPqHTYI4q9UEN4CbHRc.png",
+      "name": "Paramount Pictures",
+      "origin_country": "US"
+    },
+    {
+      "id": 333,
+      "logo_path": "/5xUJfzPZ8jWJUDzYtIeuPO4qPIa.png",
+      "name": "Original Film",
+      "origin_country": "US"
+    },
+    {
+      "id": 77884,
+      "logo_path": "/dP2lxVNctD5Cried0IWVqgrO2o9.png",
+      "name": "Marza Animation Planet",
+      "origin_country": "JP"
+    },
+    {
+      "id": 113750,
+      "logo_path": "/A3QVZ9Ah0yI2d2GiXUFpdlbTgyr.png",
+      "name": "SEGA",
+      "origin_country": "JP"
+    },
+    {
+      "id": 10644,
+      "logo_path": "/ocLZIdYJBppuCt1rhYEb2jbpt5F.png",
+      "name": "Blur Studio",
+      "origin_country": "US"
+    },
+    {
+      "id": 168701,
+      "logo_path": "/vWdZFT4V64CCv12D10m44duQjyg.png",
+      "name": "SEGA of America",
+      "origin_country": "US"
+    }
+  ],
+  "production_countries": [
+    {
+      "iso_3166_1": "JP",
+      "name": "Japan"
+    },
+    {
+      "iso_3166_1": "US",
+      "name": "United States of America"
+    }
+  ],
+  "release_date": "2024-12-19",
+  "revenue": 446398000,
+  "runtime": 100,
+  "spoken_languages": [
+    {
+      "english_name": "English",
+      "iso_639_1": "en",
+      "name": "English"
+    }
+  ],
+  "status": "Released",
+  "tagline": "Essayez de suivre.",
+  "title": "Sonic 3, le film",
+  "video": false,
+  "vote_average": 7.853,
+  "vote_count": 1120
+}**
+
+## Réponse :
+### Plan
+1. Create a class to manage film lists
+2. Add methods to create/add/remove lists and films
+3. Use localStorage to persist data
+4. Add error handling and validation
+
+```javascript
+
+
+class FilmListManager {
+  constructor() {
+    this.initializeStorage();
+  }
+
+  initializeStorage() {
+    if (!localStorage.getItem('filmLists')) {
+      localStorage.setItem('filmLists', JSON.stringify({}));
+    }
+  }
+
+  // Create a new list
+  createList(listName) {
+    const lists = this.getAllLists();
+    if (lists[listName]) {
+      throw new Error('List already exists');
+    }
+    lists[listName] = [];
+    this.saveLists(lists);
+    return lists[listName];
+  }
+
+  // Add film to list
+  addFilmToList(listName, film) {
+    const lists = this.getAllLists();
+    if (!lists[listName]) {
+      throw new Error('List does not exist');
+    }
+    // Check if film already exists in list
+    const filmExists = lists[listName].some(f => f.id === film.id);
+    if (!filmExists) {
+      lists[listName].push(film);
+      this.saveLists(lists);
+    }
+  }
+
+  // Remove film from list
+  removeFilmFromList(listName, filmId) {
+    const lists = this.getAllLists();
+    if (!lists[listName]) {
+      throw new Error('List does not exist');
+    }
+    lists[listName] = lists[listName].filter(film => film.id !== filmId);
+    this.saveLists(lists);
+  }
+
+  // Delete entire list
+  deleteList(listName) {
+    const lists = this.getAllLists();
+    if (!lists[listName]) {
+      throw new Error('List does not exist');
+    }
+    delete lists[listName];
+    this.saveLists(lists);
+  }
+
+  // Get all films in a list
+  getList(listName) {
+    const lists = this.getAllLists();
+    return lists[listName] || [];
+  }
+
+  // Get all lists
+  getAllLists() {
+    return JSON.parse(localStorage.getItem('filmLists'));
+  }
+
+  // Save lists to localStorage
+  saveLists(lists) {
+    localStorage.setItem('filmLists', JSON.stringify(lists));
+  }
+}
+
+// Export instance
+export const filmListManager = new FilmListManager();
+```
+
+### Usage Example
+```javascript
+// Create new list
+filmListManager.createList('Favorites');
+
+// Add film to list
+filmListManager.addFilmToList('Favorites', filmObject);
+
+// Get all films in list
+const favorites = filmListManager.getList('Favorites');
+
+// Remove film from list
+filmListManager.removeFilmFromList('Favorites', filmId);
+
+// Delete list
+filmListManager.deleteList('Favorites');
+```
+
+
+___
+___
+
+
+
+## Prompt :
+**Crée la vue de ce controlleur, ainsi que sa méthode render et run comme dans les autres fichiers**
+
+## Réponse :
+### Plan
+1. Create view file for lists
+2. Create controller with render and run methods
+3. Add functionality to display and manage lists
+
+```javascript
+
+
+import ViewLists from '../Views/lists-films';
+import { filmListManager } from './FilmListManager';
+
+const ListsFilms = class ListsFilms {
+  constructor() {
+    this.el = document.querySelector('#app');
+    this.lists = filmListManager.getAllLists();
+    this.render();
+    this.run();
+  }
+
+  render() {
+    this.el.innerHTML = `
+      <div class="container-fluid">
+        ${ViewLists(this.lists)}
+      </div>
+    `;
+  }
+
+  run() {
+    // Add list button functionality
+    const addListBtn = document.querySelector('#addList');
+    if (addListBtn) {
+      addListBtn.addEventListener('click', () => {
+        const listName = prompt('Enter list name:');
+        if (listName) {
+          try {
+            filmListManager.createList(listName);
+            this.lists = filmListManager.getAllLists();
+            this.render();
+          } catch (error) {
+            alert(error.message);
+          }
+        }
+      });
+    }
+
+    // Delete list button functionality
+    document.querySelectorAll('.delete-list').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const { listName } = e.target.dataset;
+        if (confirm(`Delete list "${listName}"?`)) {
+          filmListManager.deleteList(listName);
+          this.lists = filmListManager.getAllLists();
+          this.render();
+        }
+      });
+    });
+  }
+};
+
+export default ListsFilms;
+
+// filepath: /src/Views/lists-films/index.js
+const ViewLists = (lists) => `
+  <div class="row">
+    <div class="col-12 mb-4">
+      <h2>My Lists</h2>
+      <button id="addList" class="btn btn-primary">Create New List</button>
+    </div>
+    
+    ${Object.entries(lists).map(([listName, films]) => `
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">${listName}</h5>
+            <button 
+              class="btn btn-danger btn-sm delete-list" 
+              data-list-name="${listName}"
+            >
+              Delete
+            </button>
+          </div>
+          <div class="card-body">
+            <p>${films.length} films</p>
+            <ul class="list-group">
+              ${films.slice(0, 3).map(film => `
+                <li class="list-group-item">${film.title}</li>
+              `).join('')}
+            </ul>
+            ${films.length > 3 ? `
+              <p class="mt-2 text-muted">And ${films.length - 3} more...</p>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+`;
+
+export default ViewLists;
+```
+
+This implementation:
+- Creates a dedicated view for lists
+- Adds create/delete list functionality 
+- Shows films in each list
+- Uses Bootstrap for styling
+- Handles empty states
+- Confirms before deleting lists
+
+
+
+___
+___
+
+
+
+## Prompt :
+**Lorsque j'appuie sur le bouton create new list ou bien le bouton delete quand je viens de charger la page, cela ne fonctionne qu'une seule fois, après cela les boutons ne font plus rien**
+
+# Réponse :
+### Plan
+1. Problem: Event listeners are lost after render
+2. Solution: Move event listeners to separate method
+3. Call event listeners setup after each render
+4. Use event delegation for dynamic elements
+
+```javascript
+
+
+const ListsFilms = class ListsFilms {
+  constructor() {
+    this.el = document.querySelector('#app');
+    this.initializeStorage();
+    this.lists = this.getAllLists();
+    this.render();
+    this.setupEventListeners();
+  }
+
+  // ...existing code...
+
+  render() {
+    this.el.innerHTML = ViewListsFilms(this.lists);
+    this.setupEventListeners(); // Re-attach event listeners after render
+  }
+
+  setupEventListeners() {
+    // Use event delegation for dynamic elements
+    this.el.addEventListener('click', (e) => {
+      // Handle add list button
+      if (e.target.matches('#addList')) {
+        const listName = prompt('Enter list name:');
+        if (listName) {
+          try {
+            this.createList(listName);
+            this.lists = this.getAllLists();
+            this.render();
+          } catch (error) {
+            alert(error.message);
+          }
+        }
+      }
+
+      // Handle delete list button
+      if (e.target.matches('.delete-list')) {
+        const listName = e.target.dataset.listName;
+        if (window.confirm(`Delete list "${listName}"?`)) {
+          this.deleteList(listName);
+          this.lists = this.getAllLists();
+          this.render();
+        }
+      }
+    });
+  }
+
+  // Remove run() method as it's replaced by setupEventListeners
+}
+
+export default ListsFilms;
+```
+
+
+
+___
+___
+
+
+
+## Prompt : 
+**Comment implémenter ma fonctionnalité de listes sur ma page popular-films ?**
+
+## Réponse :
+### Plan
+1. Add dropdown menu for list management
+2. Show existing lists
+3. Allow adding films to lists
+4. Handle list creation
+
+```javascript
+
+
+const film = (data) => {
+  const {
+    title,
+    poster_path: posterPath,
+    release_date: releaseDate,
+    id
+  } = data;
+
+  const currentLang = localStorage.getItem('language') || 'fr-FR';
+  const text = translations[currentLang];
+  
+  // Get existing lists
+  const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+
+  return (`
+    <div class="col-3 mt-4" id="Films">
+      <div class="cards">
+        <div class="card">
+          <div class="dropdown position-absolute end-0 m-2">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              Add to list
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" data-film-id="${id}">
+              ${Object.keys(lists).map(listName => `
+                <li>
+                  <button class="dropdown-item add-to-list" data-list="${listName}">
+                    ${listName}
+                  </button>
+                </li>
+              `).join('')}
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <button class="dropdown-item create-list">Create new list</button>
+              </li>
+            </ul>
+          </div>
+          <a href="/film?id=${id}">
+            <img src="https://image.tmdb.org/t/p/w500/${posterPath}" class="card-img-top" alt="poster">
+            <div class="card-body text-center">
+              <h5 class="card-title">${title}</h5>
+              <p>${text.releaseDate} : ${new Date(releaseDate).toLocaleDateString(localStorage.getItem('language'))}</p>
+              <a href="/film?id=${id}" class="btn btn-primary">
+                ${text.viewDetails}
+              </a>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  `);
+};
+```
+
+Add event listeners in your PopularFilms controller:
+
+```javascript
+
+
+setupListManagement() {
+  document.querySelectorAll('.create-list').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      const listName = prompt('Enter list name:');
+      if (listName) {
+        try {
+          const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+          lists[listName] = [];
+          localStorage.setItem('filmLists', JSON.stringify(lists));
+          this.render();
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+    });
+  });
+
+  document.querySelectorAll('.add-to-list').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      const { list } = e.target.dataset;
+      const { filmId } = e.target.closest('.dropdown-menu').dataset;
+      
+      const film = this.Films.find(f => f.id.toString() === filmId);
+      if (film) {
+        try {
+          const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+          if (!lists[list].some(f => f.id === film.id)) {
+            lists[list].push(film);
+            localStorage.setItem('filmLists', JSON.stringify(lists));
+            alert('Film added to list!');
+          }
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+    });
+  });
+}
+
+render() {
+  this.el.innerHTML = `
+    ${ViewNav()}
+    <div id="Films" class="container-fluid">
+      ${ViewFilms(this.Films)}
+    </div>
+    ${ViewNumberPage(this.params.page)}
+  `;
+
+  this.setupLanguageSelector();
+  this.setupListManagement();
+  this.onKeyPress();
+}
+```
+
+This implementation:
+- Adds a dropdown menu to each film card
+- Shows existing lists
+- Allows creating new lists
+- Handles adding films to lists
+- Prevents duplicate films in lists
+- Shows feedback messages

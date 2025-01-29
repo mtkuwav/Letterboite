@@ -1,30 +1,37 @@
-const film = (data) => {
-  const {
-    title,
-    poster_path: posterPath,
-    release_date: releaseDate,
-    id
-  } = data;
-
-  return (`
-    <div class="col-2 mt-4" id="Films">
-      <div class="card">
-        <img src="https://image.tmdb.org/t/p/w500/${posterPath}" class="card-img-top" alt="poster">
-        <div class="card-body text-center">
-          <h5 class="card-title">${title}</h5>
-          <p>Date de sortie: ${new Date(releaseDate).toLocaleDateString('fr')}</p>
-          <a
-            href="/film?id=${id}"
-            class="btn btn-primary"
-          >Voir plus</a>
+const ViewLists = (lists) => `
+  <div class="row">
+    <div class="col-12 mb-4">
+      <h2>My Lists</h2>
+      <button id="addList" class="btn btn-primary">Create New List</button>
+    </div>
+    
+    ${Object.entries(lists).map(([listName, films]) => `
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">${listName}</h5>
+            <button 
+              class="btn btn-danger btn-sm delete-list" 
+              data-list-name="${listName}"
+            >
+              Delete
+            </button>
+          </div>
+          <div class="card-body">
+            <p>${films.length} films</p>
+            <ul class="list-group">
+              ${films.slice(0, 3).map((film) => `
+                <li class="list-group-item">${film.title}</li>
+              `).join('')}
+            </ul>
+            ${films.length > 3 ? `
+              <p class="mt-2 text-muted">And ${films.length - 3} more...</p>
+            ` : ''}
+          </div>
         </div>
       </div>
-    </div>
-  `);
-};
-
-export default (datas) => `
-  <div class="row">
-    ${datas.map((data) => (film(data))).join('')}
+    `).join('')}
   </div>
 `;
+
+export default ViewLists;
