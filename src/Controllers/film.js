@@ -1,4 +1,24 @@
 import ViewFilm from '../Views/film';
+// import ListsFilms from './lists-films';
+
+const text = {
+  'fr-FR': {
+    addWatchlist: 'Ajouter à la Watchlist',
+    removeWatchlist: 'Retirer de la watchlist'
+  },
+  'en-US': {
+    addWatchlist: 'Add to watchlist',
+    removeWatchlist: 'Remove from watchlist'
+  },
+  'de-DE': {
+    addWatchlist: 'Zur Watchlist hinzufügen',
+    removeWatchlist: 'Aus der Watchlist entfernen'
+  },
+  'es-ES': {
+    addWatchlist: 'Añadir a la Watchlist',
+    removeWatchlist: 'Quitar de la Watchlist'
+  }
+};
 
 const Film = class Film {
   constructor(params) {
@@ -24,6 +44,88 @@ const Film = class Film {
     });
   }
 
+  setupListManagement() {
+    document.querySelectorAll('.create-list').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // const { filmId } = e.target.closest('.dropdown-menu').dataset;
+        // Use this.Film instead of this.Films.find
+        const film = this.Film;
+
+        const listName = prompt('Enter list name:');
+        if (listName && film) {
+          try {
+            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+            lists[listName] = [film];
+            localStorage.setItem('filmLists', JSON.stringify(lists));
+            alert('List created and film added!');
+            this.render();
+          } catch (error) {
+            console.error('Error creating list:', error);
+            alert(error.message);
+          }
+        }
+      });
+    });
+
+    document.querySelectorAll('.add-to-list').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const { list } = e.target.dataset;
+        // Use this.Film directly
+        const film = this.Film;
+
+        if (film) {
+          try {
+            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+            if (!lists[list].some((f) => f.id === film.id)) {
+              lists[list].push(film);
+              localStorage.setItem('filmLists', JSON.stringify(lists));
+              alert('Film added to list!');
+            } else {
+              alert('Film already in list!');
+            }
+          } catch (error) {
+            console.error('Error adding to list:', error);
+            alert(error.message);
+          }
+        }
+      });
+    });
+  }
+
+  setupWatchlistButton() {
+    const watchlistBtn = document.querySelector('.watchlist-btn');
+    const currentLang = localStorage.getItem('language') || 'fr-FR';
+
+    if (watchlistBtn) {
+      watchlistBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+        if (!lists.watchlist) {
+          lists.watchlist = [];
+        }
+
+        const index = lists.watchlist.findIndex((f) => f.id === this.Film.id);
+        if (index === -1) {
+          lists.watchlist.push(this.Film);
+          watchlistBtn.textContent = text[currentLang].removeWatchlist;
+          watchlistBtn.classList.remove('btn-success');
+          watchlistBtn.classList.add('btn-danger');
+        } else {
+          lists.watchlist.splice(index, 1);
+          watchlistBtn.textContent = text[currentLang].addWatchlist;
+          watchlistBtn.classList.remove('btn-danger');
+          watchlistBtn.classList.add('btn-success');
+        }
+
+        localStorage.setItem('filmLists', JSON.stringify(lists));
+      });
+    }
+  }
+
   render() {
     const {
       title,
@@ -31,15 +133,18 @@ const Film = class Film {
       poster_path: posterPath,
       origin_country: originCountry,
       overview,
-      tagline
+      tagline,
+      id
     } = this.Film;
     this.el.innerHTML = `
       <div class="container-fluid">
-        ${ViewFilm(title, releaseDate, posterPath, originCountry, overview, tagline)}
+        ${ViewFilm(title, releaseDate, posterPath, originCountry, overview, tagline, id)}
       </div>
     `;
 
     this.setupLanguageSelector();
+    this.setupListManagement();
+    this.setupWatchlistButton();
   }
 
   async run() {

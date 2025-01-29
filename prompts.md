@@ -1081,3 +1081,45 @@ This implementation:
 - Handles adding films to lists
 - Prevents duplicate films in lists
 - Shows feedback messages
+
+
+
+___
+___
+
+
+
+## Prompt :
+**Quand je crée une liste avec le bouton add to list de la page pupular-films, comment faire pour ajouter directement le film dedans ?**
+
+## Réponse :
+### Plan
+1. Modify create list logic to include selected film
+2. Get film ID from dropdown menu
+3. Add film to newly created list
+4. Update localStorage
+
+```javascript
+
+
+document.querySelectorAll('.create-list').forEach((btn) => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const { filmId } = e.target.closest('.dropdown-menu').dataset;
+    const film = this.Films.find((f) => f.id.toString() === filmId);
+    
+    const listName = prompt('Enter list name:');
+    if (listName && film) {
+      try {
+        const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+        lists[listName] = [film]; // Initialize list with current film
+        localStorage.setItem('filmLists', JSON.stringify(lists));
+        alert('List created and film added!');
+        this.render();
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+  });
+});
+```

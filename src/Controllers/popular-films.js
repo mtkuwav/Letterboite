@@ -91,12 +91,16 @@ const PopularFilms = class PopularFilms {
     document.querySelectorAll('.create-list').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
+        const { filmId } = e.target.closest('.dropdown-menu').dataset;
+        const film = this.Films.find((f) => f.id.toString() === filmId);
+
         const listName = prompt('Enter list name:');
-        if (listName) {
+        if (listName && film) {
           try {
             const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
-            lists[listName] = [];
+            lists[listName] = [film]; // Initialize list with current film
             localStorage.setItem('filmLists', JSON.stringify(lists));
+            alert('List created and film added!');
             this.render();
           } catch (error) {
             alert(error.message);

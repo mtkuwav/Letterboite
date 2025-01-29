@@ -1,4 +1,7 @@
+import ViewHeader from './header';
+
 const ViewLists = (lists) => `
+  ${ViewHeader()}
   <div class="row">
     <div class="col-12 mb-4">
       <h2>My Lists</h2>
@@ -19,14 +22,13 @@ const ViewLists = (lists) => `
           </div>
           <div class="card-body">
             <p>${films.length} films</p>
-            <ul class="list-group">
-              ${films.slice(0, 3).map((film) => `
-                <li class="list-group-item">${film.title}</li>
+            <div class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
+              ${films.map((film) => `
+                <a href="/film?id=${film.id}" class="list-group-item list-group-item-action">
+                  ${film.title}
+                </a>
               `).join('')}
-            </ul>
-            ${films.length > 3 ? `
-              <p class="mt-2 text-muted">And ${films.length - 3} more...</p>
-            ` : ''}
+            </div>
           </div>
         </div>
       </div>
