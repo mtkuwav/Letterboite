@@ -1,4 +1,6 @@
-# Hello World
+# Letterboîte
+
+Letterboîte is a small front-end project that I made for school. Its purpose was to enhance my JavaScript skills to create dynamic responsive front-end environnements and using API implementation. It is a parody of the unfamous website [letterboxd](https://letterboxd.com/)
 
 ## Installation
 
