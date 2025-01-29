@@ -1,19 +1,27 @@
 const translations = {
   'fr-FR': {
     releaseDate: 'Date de sortie',
-    viewDetails: 'Voir plus'
+    viewDetails: 'Voir plus',
+    addList: 'Ajouter à une liste',
+    addWatchlist: 'Ajouter à la Watchlist'
   },
   'en-US': {
     releaseDate: 'Release date',
-    viewDetails: 'See more'
+    viewDetails: 'See more',
+    addList: 'Add to list',
+    addWatchlist: 'Add to watchlist'
   },
   'de-DE': {
     releaseDate: 'Veröffentlichungsdatum',
-    viewDetails: 'Mehr erfahren'
+    viewDetails: 'Mehr erfahren',
+    addList: 'Zur Liste hinzufügen',
+    addWatchlist: 'Zur Watchlist hinzufügen'
   },
   'es-ES': {
     releaseDate: 'Fecha de lanzamiento',
-    viewDetails: 'Ver más'
+    viewDetails: 'Ver más',
+    addList: 'Añadir a la lista',
+    addWatchlist: 'Añadir a la Watchlist'
   }
 };
 
@@ -36,7 +44,7 @@ const film = (data) => {
         <div class="card">
           <div class="dropdown position-absolute end-0 m-2">
             <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-              Add to list
+              ${text.addList}
             </button>
             <ul class="dropdown-menu dropdown-menu-end" data-film-id="${id}">
               ${Object.keys(lists).map((listName) => `

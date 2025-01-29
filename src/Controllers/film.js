@@ -24,6 +24,56 @@ const Film = class Film {
     });
   }
 
+  setupListManagement() {
+    document.querySelectorAll('.create-list').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // const { filmId } = e.target.closest('.dropdown-menu').dataset;
+        // Use this.Film instead of this.Films.find
+        const film = this.Film;
+
+        const listName = prompt('Enter list name:');
+        if (listName && film) {
+          try {
+            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+            lists[listName] = [film];
+            localStorage.setItem('filmLists', JSON.stringify(lists));
+            alert('List created and film added!');
+            this.render();
+          } catch (error) {
+            console.error('Error creating list:', error);
+            alert(error.message);
+          }
+        }
+      });
+    });
+
+    document.querySelectorAll('.add-to-list').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const { list } = e.target.dataset;
+        // Use this.Film directly
+        const film = this.Film;
+
+        if (film) {
+          try {
+            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+            if (!lists[list].some((f) => f.id === film.id)) {
+              lists[list].push(film);
+              localStorage.setItem('filmLists', JSON.stringify(lists));
+              alert('Film added to list!');
+            } else {
+              alert('Film already in list!');
+            }
+          } catch (error) {
+            console.error('Error adding to list:', error);
+            alert(error.message);
+          }
+        }
+      });
+    });
+  }
+
   render() {
     const {
       title,
@@ -31,15 +81,17 @@ const Film = class Film {
       poster_path: posterPath,
       origin_country: originCountry,
       overview,
-      tagline
+      tagline,
+      id
     } = this.Film;
     this.el.innerHTML = `
       <div class="container-fluid">
-        ${ViewFilm(title, releaseDate, posterPath, originCountry, overview, tagline)}
+        ${ViewFilm(title, releaseDate, posterPath, originCountry, overview, tagline, id)}
       </div>
     `;
 
     this.setupLanguageSelector();
+    this.setupListManagement();
   }
 
   async run() {

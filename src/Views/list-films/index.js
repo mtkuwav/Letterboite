@@ -24,7 +24,7 @@ const ViewLists = (lists) => `
             <p>${films.length} films</p>
             <ul class="list-group">
               ${films.slice(0, 3).map((film) => `
-                <li class="list-group-item">${film.title}</li>
+                <a href="/film?id=${film.id}"><li class="list-group-item">${film.title}</li></a>
               `).join('')}
             </ul>
             ${films.length > 3 ? `
