@@ -42,10 +42,10 @@ export default (title, releaseDate, posterPath, originCountry, overview, tagline
         <h1 class="display-5 fw-bold">${text.info}</h1>
         <img src="https://image.tmdb.org/t/p/original${posterPath}" class="card-img-top" alt="poster">
         <ul class="list-group">
-          <li class="list-group-item">${text.releaseDate} : ${new Date(releaseDate).toLocaleDateString(currentLang)}</li>
-          <li class="list-group-item">${text.summary} : ${overview}</li>
-          <li class="list-group-item">${text.originCountry} : ${originCountry}</li>
-          <li class="list-group-item text-body-emphasis">"${tagline}"</li>
+          ${releaseDate ? `<li class="list-group-item">${text.releaseDate} : ${new Date(releaseDate).toLocaleDateString(currentLang)}</li>` : ''}
+          ${overview ? `<li class="list-group-item">${text.summary} : ${overview}</li>` : ''}
+          ${originCountry ? `<li class="list-group-item">${text.originCountry} : ${originCountry}</li>` : ''}
+          ${tagline ? `<li class="list-group-item text-body-emphasis">"${tagline}"</li>` : ''}
         </ul>
         <a
           href="/popular-films"
