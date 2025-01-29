@@ -1,7 +1,7 @@
 import ViewNav from '../Views/popular-films/nav';
 import ViewFilms from '../Views/popular-films';
 import ViewNumberPage from '../Views/popular-films/nav-page';
-import ControllerListsFilms from './lists-films';
+// import ControllerListsFilms from './lists-films';
 
 const PopularFilms = class PopularFilms {
   constructor(params) {
@@ -94,7 +94,9 @@ const PopularFilms = class PopularFilms {
         const listName = prompt('Enter list name:');
         if (listName) {
           try {
-            ControllerListsFilms.createList(listName);
+            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+            lists[listName] = [];
+            localStorage.setItem('filmLists', JSON.stringify(lists));
             this.render();
           } catch (error) {
             alert(error.message);
@@ -104,7 +106,7 @@ const PopularFilms = class PopularFilms {
     });
 
     document.querySelectorAll('.add-to-list').forEach((btn) => {
-      btn.addEventListener('click', async (e) => {
+      btn.addEventListener('click', (e) => {
         e.preventDefault();
         const { list } = e.target.dataset;
         const { filmId } = e.target.closest('.dropdown-menu').dataset;
@@ -112,9 +114,12 @@ const PopularFilms = class PopularFilms {
         const film = this.Films.find((f) => f.id.toString() === filmId);
         if (film) {
           try {
-            const listsManager = new ControllerListsFilms();
-            listsManager.addFilmToList(list, film);
-            alert('Film added to list!');
+            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+            if (!lists[list].some((f) => f.id === film.id)) {
+              lists[list].push(film);
+              localStorage.setItem('filmLists', JSON.stringify(lists));
+              alert('Film added to list!');
+            }
           } catch (error) {
             alert(error.message);
           }
@@ -133,8 +138,8 @@ const PopularFilms = class PopularFilms {
     `;
 
     this.setupLanguageSelector();
-    this.onKeyPress();
     this.setupListManagement();
+    this.onKeyPress();
   }
 
   async run() {
