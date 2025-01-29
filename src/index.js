@@ -7,6 +7,9 @@ import ControllerListsFilms from './Controllers/lists-films';
 import './index.scss';
 
 const routes = [{
+  url: '/',
+  controller: ControllerLogin
+}, {
   url: '/login',
   controller: ControllerLogin
 }, {
