@@ -1,5 +1,5 @@
 import ViewFilm from '../Views/film';
-// import ListsFilms from './lists-films';
+import { showModal, promptModal } from '../Views/film/modal';
 
 const text = {
   'fr-FR': {
@@ -44,50 +44,37 @@ const Film = class Film {
     });
   }
 
-  setupListManagement() {
+  async setupListManagement() {
     document.querySelectorAll('.create-list').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.preventDefault();
-        // const { filmId } = e.target.closest('.dropdown-menu').dataset;
-        // Use this.Film instead of this.Films.find
         const film = this.Film;
 
-        const listName = prompt('Enter list name:');
+        const listName = await promptModal('Enter list name:');
         if (listName && film) {
-          try {
-            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
-            lists[listName] = [film];
-            localStorage.setItem('filmLists', JSON.stringify(lists));
-            alert('List created and film added!');
-            this.render();
-          } catch (error) {
-            console.error('Error creating list:', error);
-            alert(error.message);
-          }
+          const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+          lists[listName] = [film];
+          localStorage.setItem('filmLists', JSON.stringify(lists));
+          await showModal('List created and film added!');
+          this.render();
         }
       });
     });
 
     document.querySelectorAll('.add-to-list').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.preventDefault();
         const { list } = e.target.dataset;
-        // Use this.Film directly
         const film = this.Film;
 
         if (film) {
-          try {
-            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
-            if (!lists[list].some((f) => f.id === film.id)) {
-              lists[list].push(film);
-              localStorage.setItem('filmLists', JSON.stringify(lists));
-              alert('Film added to list!');
-            } else {
-              alert('Film already in list!');
-            }
-          } catch (error) {
-            console.error('Error adding to list:', error);
-            alert(error.message);
+          const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+          if (!lists[list].some((f) => f.id === film.id)) {
+            lists[list].push(film);
+            localStorage.setItem('filmLists', JSON.stringify(lists));
+            await showModal('Film added to list!');
+          } else {
+            await showModal('Film already in list!');
           }
         }
       });
@@ -159,15 +146,10 @@ const Film = class Film {
       }
     };
 
-    try {
-      const response = await fetch(url, options);
-      const data = await response.json();
-      this.Film = data;
-      console.log('Données du film :', this.Film);
-      this.render();
-    } catch (error) {
-      console.error('Error fetching movie details:', error);
-    }
+    const response = await fetch(url, options);
+    const data = await response.json();
+    this.Film = data;
+    this.render();
   }
 };
 
