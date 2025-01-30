@@ -22,6 +22,7 @@ Letterboîte is a small front-end project that I made for school. Its purpose wa
 - **If you don't have Node.js v20, [install NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) and use version 20 by doing this :**
 ```bash
 nvm install 20
+nvm use 20
 ```
 then check if you're using the good version by typing 
 ```bash
