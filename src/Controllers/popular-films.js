@@ -1,6 +1,8 @@
 import ViewNav from '../Views/popular-films/nav';
 import ViewFilms from '../Views/popular-films';
 import ViewNumberPage from '../Views/popular-films/nav-page';
+import setupLanguageSelector from './utils/language-selector';
+import setupListManagement from './utils/list-management';
 // import ControllerListsFilms from './lists-films';
 
 const PopularFilms = class PopularFilms {
@@ -71,68 +73,8 @@ const PopularFilms = class PopularFilms {
     return data.results;
   }
 
-  setupLanguageSelector() {
-    const languageItems = document.querySelectorAll('[data-lang]');
-    const languageButton = document.querySelector('#languageSelector');
-
-    languageItems.forEach((item) => {
-      item.addEventListener('click', (event) => {
-        event.preventDefault();
-        const { lang } = event.target.dataset;
-        localStorage.setItem('language', lang);
-        languageButton.textContent = event.target.textContent;
-        this.currentLang = lang;
-        window.location.reload();
-      });
-    });
-  }
-
-  setupListManagement() {
-    document.querySelectorAll('.create-list').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const { filmId } = e.target.closest('.dropdown-menu').dataset;
-        const film = this.Films.find((f) => f.id.toString() === filmId);
-
-        const listName = prompt('Enter list name:');
-        if (listName && film) {
-          try {
-            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
-            lists[listName] = [film]; // Initialize list with current film
-            localStorage.setItem('filmLists', JSON.stringify(lists));
-            alert('List created and film added!');
-            this.render();
-          } catch (error) {
-            alert(error.message);
-          }
-        }
-      });
-    });
-
-    document.querySelectorAll('.add-to-list').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const { list } = e.target.dataset;
-        const { filmId } = e.target.closest('.dropdown-menu').dataset;
-
-        const film = this.Films.find((f) => f.id.toString() === filmId);
-        if (film) {
-          try {
-            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
-            if (!lists[list].some((f) => f.id === film.id)) {
-              lists[list].push(film);
-              localStorage.setItem('filmLists', JSON.stringify(lists));
-              alert('Film added to list!');
-            }
-          } catch (error) {
-            alert(error.message);
-          }
-        }
-      });
-    });
-  }
-
-  render() {
+  async render() {
+    console.log('Rendering with films:', this.Films);
     this.el.innerHTML = `
       ${ViewNav()}
       <div id="Films" class="container-fluid">
@@ -141,8 +83,10 @@ const PopularFilms = class PopularFilms {
       ${ViewNumberPage(this.params.page)}
     `;
 
-    this.setupLanguageSelector();
-    this.setupListManagement();
+    setupLanguageSelector();
+    if (this.Films && this.Films.length > 0) {
+      setupListManagement(this.Films, () => this.render());
+    }
     this.onKeyPress();
   }
 
