@@ -114,7 +114,7 @@ const PopularFilms = class PopularFilms {
   }
 
   async searchMovies(query) {
-    const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`;
+    const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&include_adult=${localStorage.getItem('adult')}`;
     const options = {
       method: 'GET',
       headers: {
