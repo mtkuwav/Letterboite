@@ -68,6 +68,11 @@ const ViewFilm = (film) => {
   const text = translations[currentLang];
   const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
 
+  const watchlist = lists.watchlist || [];
+  const isInWatchlist = watchlist.some((f) => f.id === film.id);
+  const watchlistBtnClass = isInWatchlist ? 'btn-danger' : 'btn-success';
+  const watchlistBtnText = isInWatchlist ? text.removeWatchlist : text.addWatchlist;
+
   return `
     ${ViewHeader()}
     <div class="container py-5">
@@ -80,28 +85,6 @@ const ViewFilm = (film) => {
               class="img-fluid rounded shadow-lg hover-scale"
               alt="${film.title}"
             >
-            <div class="position-absolute top-0 end-0 m-3">
-              <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle shadow-sm" type="button" data-bs-toggle="dropdown">
-                  <i class="fas fa-list me-2"></i>${text.addList}
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" data-film-id="${film.id}">
-                  ${Object.keys(lists).map((listName) => `
-                    <li>
-                      <button class="dropdown-item add-to-list" data-list="${listName}">
-                        ${listName}
-                      </button>
-                    </li>
-                  `).join('')}
-                  <li><hr class="dropdown-divider"></li>
-                  <li>
-                    <button class="dropdown-item create-list">
-                      <i class="fas fa-plus-circle me-2"></i>${text.createList}
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -180,6 +163,29 @@ const ViewFilm = (film) => {
                 </div>
               </div>
             </div>
+          </div>
+          <button class="btn ${watchlistBtnClass} watchlist-btn w-100 mt-4">
+              <i class="fas fa-bookmark me-2"></i>${watchlistBtnText}
+          </button>
+          <div class="dropdown w-100 mt-2">
+                <button class="btn btn-primary dropdown-toggle w-100 shadow-sm" type="button" data-bs-toggle="dropdown">
+                  <i class="fas fa-list me-2"></i>${text.addList}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end w-100" data-film-id="${film.id}">
+                  ${Object.keys(lists).map((listName) => `
+                    <li>
+                      <button class="dropdown-item add-to-list" data-list="${listName}">
+                        ${listName}
+                      </button>
+                    </li>
+                  `).join('')}
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <button class="dropdown-item create-list">
+                      <i class="fas fa-plus-circle me-2"></i>${text.createList}
+                    </button>
+                  </li>
+                </ul>
           </div>
         </div>
       </div>
