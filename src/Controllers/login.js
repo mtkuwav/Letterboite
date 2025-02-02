@@ -1,4 +1,5 @@
 import ViewForm from '../Views/login/login';
+import setupLanguageSelector from './utils/language-selector';
 
 const LoginUser = class LoginUser {
   constructor() {
@@ -19,6 +20,7 @@ const LoginUser = class LoginUser {
       ${ViewForm()}
     </div>
     `;
+    setupLanguageSelector();
     this.run();
   }
 
