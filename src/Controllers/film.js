@@ -69,11 +69,27 @@ const Film = class Film {
       origin_country: originCountry,
       overview,
       tagline,
-      id
+      id,
+      homepage,
+      budget,
+      revenue,
+      vote
     } = this.Film;
     this.el.innerHTML = `
       <div class="container-fluid">
-        ${ViewFilm(title, releaseDate, posterPath, originCountry, overview, tagline, id)}
+        ${ViewFilm(
+    title,
+    releaseDate,
+    posterPath,
+    originCountry,
+    overview,
+    tagline,
+    id,
+    homepage,
+    budget,
+    revenue,
+    vote
+  )}
       </div>
     `;
 

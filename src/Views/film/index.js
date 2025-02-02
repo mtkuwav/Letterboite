@@ -6,6 +6,10 @@ const translations = {
     releaseDate: 'Date de sortie',
     summary: 'Résumé',
     originCountry: 'Pays d\'origine',
+    website: 'Site web',
+    budget: 'Budget',
+    revenue: 'Revenus',
+    vote: 'Note',
     back: 'Retour',
     addList: 'Ajouter à une liste',
     createList: 'Créer une nouvelle liste',
@@ -17,6 +21,10 @@ const translations = {
     releaseDate: 'Release date',
     summary: 'Summary',
     originCountry: 'Origin country',
+    website: 'Website',
+    budget: 'Budget',
+    revenue: 'Revenue',
+    vote: 'Note',
     back: 'Back',
     addList: 'Add to list',
     createList: 'Create a new list',
@@ -28,6 +36,10 @@ const translations = {
     releaseDate: 'Veröffentlichungsdatum',
     summary: 'Zusammenfassung',
     originCountry: 'Herkunftsland',
+    website: 'Webseite',
+    budget: 'Budget',
+    revenue: 'Einkommen',
+    vote: 'Notiz',
     back: 'Zurück',
     addList: 'Zur Liste hinzufügen',
     createList: 'Erstellen einer neuen Liste',
@@ -39,6 +51,10 @@ const translations = {
     releaseDate: 'Fecha de lanzamiento',
     summary: 'Resumen',
     originCountry: 'País de origen',
+    website: 'Sitio web',
+    budget: 'Presupuesto',
+    revenue: 'Ingreso',
+    vote: 'Nota',
     back: 'Volver',
     addList: 'Añadir a la lista',
     createList: 'Crear una nueva lista',
@@ -47,7 +63,19 @@ const translations = {
   }
 };
 
-export default (title, releaseDate, posterPath, originCountry, overview, tagline, id) => {
+export default (
+  title,
+  releaseDate,
+  posterPath,
+  originCountry,
+  overview,
+  tagline,
+  id,
+  homepage,
+  budget,
+  revenue,
+  vote
+) => {
   const currentLang = localStorage.getItem('language') || 'fr-FR';
   const text = translations[currentLang];
 
@@ -64,6 +92,10 @@ export default (title, releaseDate, posterPath, originCountry, overview, tagline
           ${releaseDate ? `<li class="list-group-item">${text.releaseDate} : ${new Date(releaseDate).toLocaleDateString(currentLang)}</li>` : ''}
           ${overview ? `<li class="list-group-item">${text.summary} : ${overview}</li>` : ''}
           ${originCountry ? `<li class="list-group-item">${text.originCountry} : ${originCountry}</li>` : ''}
+          ${homepage ? `<li class="list-group-item">${text.website} : <a href="${homepage}">${homepage}</a></li>` : ''}
+          ${budget ? `<li class="list-group-item">${text.budget} : ${budget} $</li>` : ''}
+          ${revenue ? `<li class="list-group-item">${text.revenue} : ${revenue} $</li>` : ''}
+          ${vote ? `<li class="list-group-item">${text.vote} : ${vote}</li>` : ''}
           ${tagline ? `<li class="list-group-item text-body-emphasis">"${tagline}"</li>` : ''}
         </ul>
         <div class="dropdown">

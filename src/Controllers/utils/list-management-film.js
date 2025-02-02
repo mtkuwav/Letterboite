@@ -1,5 +1,4 @@
 const setupListManagement = (film, render) => {
-
   // Create new list
   document.querySelectorAll('.create-list').forEach((btn) => {
     btn.addEventListener('click', (e) => {
