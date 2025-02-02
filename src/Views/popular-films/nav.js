@@ -35,7 +35,7 @@ export default () => {
   const text = translations[currentLang];
 
   return `
-  <nav class="navbar navbar-expand-lg text-light bg-dark border-bottom border-body">
+  <nav class="navbar navbar-expand-lg navbar-dark text-light bg-dark border-bottom border-body">
     <div class="container-fluid">
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
