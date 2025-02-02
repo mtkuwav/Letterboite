@@ -1,11 +1,9 @@
 const setupListManagement = (film, render) => {
-  console.log('Setting up list management for film:', film);
 
   // Create new list
   document.querySelectorAll('.create-list').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      console.log('Creating list for film:', film);
       try {
         const listName = prompt('Nom de la liste:');
         if (listName) {
@@ -26,7 +24,6 @@ const setupListManagement = (film, render) => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const listName = e.target.dataset.list;
-      console.log('Adding film to list:', listName, 'Film:', film);
       try {
         const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
         if (!lists[listName]) {

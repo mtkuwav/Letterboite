@@ -1,5 +1,5 @@
 const setupListManagement = (films, render) => {
-  console.log('Setting up list management with films:', films);
+
 
   // Create new list
   document.querySelectorAll('.create-list').forEach((btn) => {
@@ -7,10 +7,8 @@ const setupListManagement = (films, render) => {
       e.preventDefault();
       // Fix dataset access
       const filmId = e.target.closest('.dropdown-menu').getAttribute('data-film-id');
-      console.log('Creating list for filmId:', filmId);
 
       const film = films.find((f) => f.id.toString() === filmId);
-      console.log('Found film:', film);
 
       const listName = prompt('Nom de la liste:');
       if (listName && film) {
@@ -34,10 +32,8 @@ const setupListManagement = (films, render) => {
       const listName = e.target.dataset.list;
       // Fix dataset access
       const filmId = e.target.closest('.dropdown-menu').getAttribute('data-film-id');
-      console.log('Adding to list:', listName, 'filmId:', filmId);
 
       const film = films.find((f) => f.id.toString() === filmId);
-      console.log('Found film:', film);
 
       if (film) {
         try {
