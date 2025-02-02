@@ -62,36 +62,9 @@ const Film = class Film {
   }
 
   async render() {
-    const {
-      title,
-      release_date: releaseDate,
-      poster_path: posterPath,
-      origin_country: originCountry,
-      overview,
-      tagline,
-      id,
-      homepage,
-      budget,
-      revenue,
-      vote
-    } = this.Film;
-    this.el.innerHTML = `
-      <div class="container-fluid">
-        ${ViewFilm(
-    title,
-    releaseDate,
-    posterPath,
-    originCountry,
-    overview,
-    tagline,
-    id,
-    homepage,
-    budget,
-    revenue,
-    vote
-  )}
-      </div>
-    `;
+    if (!this.Film) return;
+
+    this.el.innerHTML = ViewFilm(this.Film);
 
     setupLanguageSelector();
     setupListManagement(this.Film, () => this.render());
