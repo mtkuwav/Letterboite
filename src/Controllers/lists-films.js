@@ -1,4 +1,5 @@
 import ViewListsFilms from '../Views/list-films/index';
+import setupLanguageSelector from './utils/language-selector';
 
 const ListsFilms = class ListsFilms {
   constructor() {
@@ -123,6 +124,7 @@ const ListsFilms = class ListsFilms {
         ${ViewListsFilms(this.lists)}
       </div>
     `;
+    setupLanguageSelector();
   }
 
   run() {

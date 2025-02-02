@@ -1,4 +1,5 @@
 import ViewForm from '../Views/login/login';
+import setupLanguageSelector from './utils/language-selector';
 
 const LoginUser = class LoginUser {
   constructor() {
@@ -19,6 +20,7 @@ const LoginUser = class LoginUser {
       ${ViewForm()}
     </div>
     `;
+    setupLanguageSelector();
     this.run();
   }
 
@@ -42,7 +44,6 @@ const LoginUser = class LoginUser {
 
       return response.status === 200;
     } catch (error) {
-      console.error('Token validation failed:', error);
       return false;
     }
   }
@@ -52,7 +53,6 @@ const LoginUser = class LoginUser {
     const input = document.querySelector('#token');
 
     if (!form || !input) {
-      console.error('Form elements not found');
       return;
     }
 

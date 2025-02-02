@@ -1,7 +1,27 @@
 import ViewNav from '../Views/popular-films/nav';
 import ViewFilms from '../Views/popular-films';
 import ViewNumberPage from '../Views/popular-films/nav-page';
-// import ControllerListsFilms from './lists-films';
+import setupLanguageSelector from './utils/language-selector';
+import setupListManagement from './utils/list-management-popular-films';
+
+const text = {
+  'fr-FR': {
+    activateAdult: 'Films pour adultes : activé',
+    deactivateAdult: 'Films pour adultes : désactivé'
+  },
+  'en-US': {
+    activateAdult: 'Adult movies : On',
+    deactivateAdult: 'Adult movies : Off'
+  },
+  'de-DE': {
+    activateAdult: 'Filme für Erwachsene: aktiviert',
+    deactivateAdult: 'Filme für Erwachsene: deaktiviert'
+  },
+  'es-ES': {
+    activateAdult: 'Películas para adultos: habilitadas',
+    deactivateAdult: 'Películas para adultos: discapacitados'
+  }
+};
 
 const PopularFilms = class PopularFilms {
   constructor(params) {
@@ -10,12 +30,48 @@ const PopularFilms = class PopularFilms {
     this.params = params;
     this.Films = [];
 
+    if (!localStorage.getItem('adult')) {
+      localStorage.setItem('adult', 'false');
+    }
+
     if (!this.params.page) {
       window.location.href = '/popular-films?page=1';
       return;
     }
 
     this.run();
+  }
+
+  setupAdultFilter() {
+    const toggleBtn = document.querySelector('.toggle-adult');
+    const currentLang = localStorage.getItem('language') || 'fr-FR';
+    const isAdultEnabled = localStorage.getItem('adult') === 'true';
+    const currentUrl = new URL(window.location.href);
+
+    if (toggleBtn) {
+      // Sync button state with localStorage
+      if (isAdultEnabled) {
+        toggleBtn.textContent = text[currentLang].deactivateAdult;
+        toggleBtn.classList.remove('btn-success');
+        toggleBtn.classList.add('btn-danger');
+        currentUrl.searchParams.set('include_adult', 'true');
+      } else {
+        toggleBtn.textContent = text[currentLang].activateAdult;
+        toggleBtn.classList.remove('btn-danger');
+        toggleBtn.classList.add('btn-success');
+        currentUrl.searchParams.set('include_adult', 'false');
+      }
+
+      toggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const newAdultState = !isAdultEnabled;
+        localStorage.setItem('adult', newAdultState);
+        currentUrl.searchParams.set('include_adult', newAdultState);
+        window.location.href = currentUrl.toString();
+      });
+    }
   }
 
   onKeyPress() {
@@ -58,7 +114,7 @@ const PopularFilms = class PopularFilms {
   }
 
   async searchMovies(query) {
-    const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`;
+    const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&include_adult=${localStorage.getItem('adult')}`;
     const options = {
       method: 'GET',
       headers: {
@@ -71,68 +127,7 @@ const PopularFilms = class PopularFilms {
     return data.results;
   }
 
-  setupLanguageSelector() {
-    const languageItems = document.querySelectorAll('[data-lang]');
-    const languageButton = document.querySelector('#languageSelector');
-
-    languageItems.forEach((item) => {
-      item.addEventListener('click', (event) => {
-        event.preventDefault();
-        const { lang } = event.target.dataset;
-        localStorage.setItem('language', lang);
-        languageButton.textContent = event.target.textContent;
-        this.currentLang = lang;
-        window.location.reload();
-      });
-    });
-  }
-
-  setupListManagement() {
-    document.querySelectorAll('.create-list').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const { filmId } = e.target.closest('.dropdown-menu').dataset;
-        const film = this.Films.find((f) => f.id.toString() === filmId);
-
-        const listName = prompt('Enter list name:');
-        if (listName && film) {
-          try {
-            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
-            lists[listName] = [film]; // Initialize list with current film
-            localStorage.setItem('filmLists', JSON.stringify(lists));
-            alert('List created and film added!');
-            this.render();
-          } catch (error) {
-            alert(error.message);
-          }
-        }
-      });
-    });
-
-    document.querySelectorAll('.add-to-list').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const { list } = e.target.dataset;
-        const { filmId } = e.target.closest('.dropdown-menu').dataset;
-
-        const film = this.Films.find((f) => f.id.toString() === filmId);
-        if (film) {
-          try {
-            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
-            if (!lists[list].some((f) => f.id === film.id)) {
-              lists[list].push(film);
-              localStorage.setItem('filmLists', JSON.stringify(lists));
-              alert('Film added to list!');
-            }
-          } catch (error) {
-            alert(error.message);
-          }
-        }
-      });
-    });
-  }
-
-  render() {
+  async render() {
     this.el.innerHTML = `
       ${ViewNav()}
       <div id="Films" class="container-fluid">
@@ -141,14 +136,17 @@ const PopularFilms = class PopularFilms {
       ${ViewNumberPage(this.params.page)}
     `;
 
-    this.setupLanguageSelector();
-    this.setupListManagement();
+    setupLanguageSelector();
+    this.setupAdultFilter();
+
+    setupListManagement(this.Films, () => this.render());
+
     this.onKeyPress();
   }
 
   async run() {
-    const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=${localStorage.getItem('language')}&page=${this.params.page}&sort_by=popularity.desc`;
-    // const url = `https://api.themoviedb.org/3/movie/popular?language=${localStorage.getItem('language')}&page=${this.params.page}`;
+    const isAdultEnabled = localStorage.getItem('adult') === 'true';
+    const url = `https://api.themoviedb.org/3/discover/movie?include_adult=${isAdultEnabled}&include_video=false&language=${localStorage.getItem('language')}&page=${this.params.page}&sort_by=popularity.desc`;
     const options = {
       method: 'GET',
       headers: {
@@ -159,10 +157,8 @@ const PopularFilms = class PopularFilms {
 
     const response = await fetch(url, options);
     const data = await response.json();
-    console.log('data : ', data);
     this.Films = data.results;
 
-    console.log('this.Films: ', this.Films);
     this.render();
   }
 };
