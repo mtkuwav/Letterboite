@@ -1,5 +1,6 @@
 import ViewFilm from '../Views/film';
-// import ListsFilms from './lists-films';
+import setupLanguageSelector from './utils/language-selector';
+import setupListManagement from './utils/list-management-film';
 
 const text = {
   'fr-FR': {
@@ -26,72 +27,6 @@ const Film = class Film {
     this.params = params;
 
     this.run();
-  }
-
-  setupLanguageSelector() {
-    const languageItems = document.querySelectorAll('[data-lang]');
-    const languageButton = document.querySelector('#languageSelector');
-
-    languageItems.forEach((item) => {
-      item.addEventListener('click', (e) => {
-        e.preventDefault();
-        const { lang } = e.target.dataset;
-        localStorage.setItem('language', lang);
-        languageButton.textContent = e.target.textContent;
-        this.currentLang = lang;
-        window.location.reload();
-      });
-    });
-  }
-
-  setupListManagement() {
-    document.querySelectorAll('.create-list').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        // const { filmId } = e.target.closest('.dropdown-menu').dataset;
-        // Use this.Film instead of this.Films.find
-        const film = this.Film;
-
-        const listName = prompt('Enter list name:');
-        if (listName && film) {
-          try {
-            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
-            lists[listName] = [film];
-            localStorage.setItem('filmLists', JSON.stringify(lists));
-            alert('List created and film added!');
-            this.render();
-          } catch (error) {
-            console.error('Error creating list:', error);
-            alert(error.message);
-          }
-        }
-      });
-    });
-
-    document.querySelectorAll('.add-to-list').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const { list } = e.target.dataset;
-        // Use this.Film directly
-        const film = this.Film;
-
-        if (film) {
-          try {
-            const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
-            if (!lists[list].some((f) => f.id === film.id)) {
-              lists[list].push(film);
-              localStorage.setItem('filmLists', JSON.stringify(lists));
-              alert('Film added to list!');
-            } else {
-              alert('Film already in list!');
-            }
-          } catch (error) {
-            console.error('Error adding to list:', error);
-            alert(error.message);
-          }
-        }
-      });
-    });
   }
 
   setupWatchlistButton() {
@@ -126,7 +61,7 @@ const Film = class Film {
     }
   }
 
-  render() {
+  async render() {
     const {
       title,
       release_date: releaseDate,
@@ -142,8 +77,8 @@ const Film = class Film {
       </div>
     `;
 
-    this.setupLanguageSelector();
-    this.setupListManagement();
+    setupLanguageSelector();
+    setupListManagement(this.Film, () => this.render());
     this.setupWatchlistButton();
   }
 

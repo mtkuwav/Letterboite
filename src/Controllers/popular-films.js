@@ -2,7 +2,7 @@ import ViewNav from '../Views/popular-films/nav';
 import ViewFilms from '../Views/popular-films';
 import ViewNumberPage from '../Views/popular-films/nav-page';
 import setupLanguageSelector from './utils/language-selector';
-import setupListManagement from './utils/list-management';
+import setupListManagement from './utils/list-management-popular-films';
 // import ControllerListsFilms from './lists-films';
 
 const PopularFilms = class PopularFilms {
@@ -74,7 +74,6 @@ const PopularFilms = class PopularFilms {
   }
 
   async render() {
-    console.log('Rendering with films:', this.Films);
     this.el.innerHTML = `
       ${ViewNav()}
       <div id="Films" class="container-fluid">
@@ -84,9 +83,9 @@ const PopularFilms = class PopularFilms {
     `;
 
     setupLanguageSelector();
-    if (this.Films && this.Films.length > 0) {
-      setupListManagement(this.Films, () => this.render());
-    }
+
+    setupListManagement(this.Films, () => this.render());
+
     this.onKeyPress();
   }
 

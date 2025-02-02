@@ -1123,3 +1123,195 @@ document.querySelectorAll('.create-list').forEach((btn) => {
   });
 });
 ```
+
+
+
+___
+___
+
+
+
+## Prompt :
+**Comment ajouter des méthodes redondantes des controllers afin de les mettre dans des fichiers utils pour ainsi éviter d'avoir à re taper le code à chaque fois ? ?**
+
+## Réponse :
+### Plan
+1. Create utility file for language selector
+2. Create utility file for list management
+3. Export reusable methods
+4. Import in controllers
+
+```javascript
+export const setupLanguageSelector = () => {
+  const languageItems = document.querySelectorAll('[data-lang]');
+  const languageButton = document.querySelector('#languageSelector');
+
+  languageItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault(); 
+      const { lang } = e.target.dataset;
+      localStorage.setItem('language', lang);
+      languageButton.textContent = e.target.textContent;
+      window.location.reload();
+    });
+  });
+};
+```
+
+```javascript
+export const setupListManagement = (films, render) => {
+  document.querySelectorAll('.create-list').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const { filmId } = e.target.closest('.dropdown-menu').dataset;
+      const film = Array.isArray(films) 
+        ? films.find(f => f.id.toString() === filmId)
+        : films;
+
+      const listName = prompt('Enter list name:');
+      if (listName && film) {
+        try {
+          const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+          lists[listName] = [film];
+          localStorage.setItem('filmLists', JSON.stringify(lists));
+          alert('List created and film added!');
+          if (render) render();
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+    });
+  });
+
+  document.querySelectorAll('.add-to-list').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const { list } = e.target.dataset;
+      const { filmId } = e.target.closest('.dropdown-menu').dataset;
+      
+      const film = Array.isArray(films) 
+        ? films.find(f => f.id.toString() === filmId)
+        : films;
+
+      if (film) {
+        try {
+          const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+          if (!lists[list].some(f => f.id === film.id)) {
+            lists[list].push(film);
+            localStorage.setItem('filmLists', JSON.stringify(lists));
+            alert('Film added to list!');
+          }
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+    });
+  });
+};
+```
+
+Then in your controllers:
+
+```javascript
+import { setupLanguageSelector } from './utils/language-selector';
+import { setupListManagement } from './utils/list-manager';
+
+class PopularFilms {
+  render() {
+    // ... existing render code ...
+    setupLanguageSelector();
+    setupListManagement(this.Films, () => this.render());
+  }
+}
+```
+
+```javascript
+import { setupLanguageSelector } from './utils/language-selector';
+import { setupListManagement } from './utils/list-manager';
+
+class Film {
+  render() {
+    // ... existing render code ...
+    setupLanguageSelector();
+    setupListManagement(this.Film, () => this.render());
+  }
+}
+```
+
+This approach:
+1. Centralizes common functionality
+2. Reduces code duplication
+3. Makes maintenance easier
+4. Allows for consistent behavior across controllers
+5. Follows DRY (Don't Repeat Yourself) principle
+
+
+
+## Prompt :
+**Adapte la fonction setupListManagement pour qu'elle ne prenne en parapère qu'un seul film et non un tableau de film, n'oublie pas de respecter les règles eslint**
+
+## Réponse :
+### Plan
+1. Modify function to accept single film object
+2. Remove array methods
+3. Simplify film lookup
+4. Add ESLint compliant comments
+5. Update error handling
+
+```javascript
+
+
+/**
+ * Sets up list management functionality for a single film
+ * @param {Object} film - The film object to manage
+ * @param {Function} render - Callback function to re-render view
+ */
+const setupListManagement = (film, render) => {
+  if (!film || typeof film !== 'object') {
+    console.error('Invalid film object provided');
+    return;
+  }
+
+  // Create new list
+  document.querySelectorAll('.create-list').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      try {
+        const listName = prompt('Nom de la liste:');
+        if (listName) {
+          const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+          lists[listName] = [film];
+          localStorage.setItem('filmLists', JSON.stringify(lists));
+          alert('Liste créée et film ajouté!');
+          if (render) render();
+        }
+      } catch (error) {
+        console.error('Error creating list:', error);
+      }
+    });
+  });
+
+  // Add to existing list
+  document.querySelectorAll('.add-to-list').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const listName = e.target.dataset.list;
+      try {
+        const lists = JSON.parse(localStorage.getItem('filmLists') || '{}');
+        if (!lists[listName]) {
+          lists[listName] = [];
+        }
+        if (!lists[listName].some((f) => f.id === film.id)) {
+          lists[listName].push(film);
+          localStorage.setItem('filmLists', JSON.stringify(lists));
+          alert('Film ajouté à la liste!');
+        }
+      } catch (error) {
+        console.error('Error adding to list:', error);
+      }
+    });
+  });
+};
+
+export default setupListManagement;
+```

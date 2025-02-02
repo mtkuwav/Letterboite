@@ -8,6 +8,7 @@ const translations = {
     originCountry: 'Pays d\'origine',
     back: 'Retour',
     addList: 'Ajouter à une liste',
+    createList: 'Créer une nouvelle liste',
     addWatchlist: 'Ajouter à la Watchlist',
     removeWatchlist: 'Retirer de la watchlist'
   },
@@ -18,6 +19,7 @@ const translations = {
     originCountry: 'Origin country',
     back: 'Back',
     addList: 'Add to list',
+    createList: 'Create a new list',
     addWatchlist: 'Add to watchlist',
     removeWatchlist: 'Remove from watchlist'
   },
@@ -28,6 +30,7 @@ const translations = {
     originCountry: 'Herkunftsland',
     back: 'Zurück',
     addList: 'Zur Liste hinzufügen',
+    createList: 'Erstellen einer neuen Liste',
     addWatchlist: 'Zur Watchlist hinzufügen',
     removeWatchlist: 'Aus der Watchlist entfernen'
   },
@@ -38,6 +41,7 @@ const translations = {
     originCountry: 'País de origen',
     back: 'Volver',
     addList: 'Añadir a la lista',
+    createList: 'Crear una nueva lista',
     addWatchlist: 'Añadir a la Watchlist',
     removeWatchlist: 'Quitar de la Watchlist'
   }
