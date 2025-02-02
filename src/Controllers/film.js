@@ -87,7 +87,6 @@ const Film = class Film {
       const response = await fetch(url, options);
       const data = await response.json();
       this.Film = data;
-      console.log('Données du film :', this.Film);
       this.render();
     } catch (error) {
       console.error('Error fetching movie details:', error);

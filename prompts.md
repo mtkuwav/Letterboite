@@ -1315,3 +1315,303 @@ const setupListManagement = (film, render) => {
 
 export default setupListManagement;
 ```
+
+
+
+___
+___
+
+## Prompt : 
+**fais moi les traductions en français, anglais, allemand et espagnol et améliore le style de list-films**
+
+## Réponse :
+### Plan
+1. Add translations object
+2. Update texts with translations
+3. Enhance card styling
+4. Add responsive design improvements
+
+```javascript
+
+
+const translations = {
+  'fr-FR': {
+    myLists: 'Mes listes',
+    createList: 'Créer une nouvelle liste',
+    delete: 'Supprimer',
+    films: 'films'
+  },
+  'en-US': {
+    myLists: 'My Lists',
+    createList: 'Create New List',
+    delete: 'Delete',
+    films: 'films'
+  },
+  'de-DE': {
+    myLists: 'Meine Listen',
+    createList: 'Neue Liste erstellen',
+    delete: 'Löschen',
+    films: 'Filme'
+  },
+  'es-ES': {
+    myLists: 'Mis Listas',
+    createList: 'Crear Nueva Lista',
+    delete: 'Eliminar',
+    films: 'películas'
+  }
+};
+
+const ViewLists = (lists) => {
+  const currentLang = localStorage.getItem('language') || 'fr-FR';
+  const text = translations[currentLang];
+
+  return `
+    ${ViewHeader()}
+    <div class="container py-4">
+      <div class="row">
+        <div class="col-12 mb-4">
+          <h2 class="display-4 mb-3">${text.myLists}</h2>
+          <button id="addList" class="btn btn-primary btn-lg shadow-sm">
+            <i class="fas fa-plus-circle me-2"></i>${text.createList}
+          </button>
+        </div>
+        
+        ${Object.entries(lists).map(([listName, films]) => `
+          <div class="col-md-4 mb-4">
+            <div class="card shadow-sm hover-shadow">
+              <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0 fw-bold text-primary">${listName}</h5>
+                <button 
+                  class="btn btn-outline-danger btn-sm delete-list" 
+                  data-list-name="${listName}"
+                >
+                  <i class="fas fa-trash-alt me-1"></i>${text.delete}
+                </button>
+              </div>
+              <div class="card-body">
+                <p class="text-muted mb-3">
+                  <i class="fas fa-film me-2"></i>${films.length} ${text.films}
+                </p>
+                <div class="list-group list-group-flush custom-scrollbar" 
+                     style="max-height: 300px; overflow-y: auto;">
+                  ${films.map((film) => `
+                    <a href="/film?id=${film.id}" 
+                       class="list-group-item list-group-item-action d-flex align-items-center">
+                      <img src="https://image.tmdb.org/t/p/w45${film.poster_path}" 
+                           class="me-2 rounded" 
+                           alt="${film.title}"
+                           onerror="this.src='placeholder.jpg'"
+                      >
+                      <span class="text-truncate">${film.title}</span>
+                    </a>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+};
+
+export default ViewLists;
+```
+
+```css
+
+
+.hover-shadow {
+  transition: all 0.3s ease;
+}
+
+.hover-shadow:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #6c757d #f8f9fa;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f8f9fa;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #6c757d;
+  border-radius: 3px;
+}
+```
+
+
+
+___
+___
+
+
+
+## Prompt :
+**Améliore le style de la page des films**
+
+## Réponse :
+### Plan
+1. Improve film page layout
+2. Add responsive design
+3. Enhance visual hierarchy
+4. Add animations
+5. Improve readability
+
+```javascript
+
+
+const ViewFilm = (film) => {
+  const currentLang = localStorage.getItem('language') || 'fr-FR';
+  const text = translations[currentLang];
+
+  return `
+    ${ViewHeader()}
+    <div class="container py-5">
+      <div class="row g-4">
+        <!-- Poster Column -->
+        <div class="col-md-4">
+          <div class="position-relative">
+            <img 
+              src="https://image.tmdb.org/t/p/w500${film.poster_path}"
+              class="img-fluid rounded shadow-lg hover-scale"
+              alt="${film.title}"
+            >
+            <div class="position-absolute top-0 end-0 m-3">
+              <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle shadow-sm" type="button" data-bs-toggle="dropdown">
+                  <i class="fas fa-list me-2"></i>${text.addList}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" data-film-id="${film.id}">
+                  <li><button class="dropdown-item create-list">
+                    <i class="fas fa-plus-circle me-2"></i>${text.createList}
+                  </button></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info Column -->
+        <div class="col-md-8">
+          <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="/popular-films?page=1" class="text-decoration-none">
+                  <i class="fas fa-arrow-left me-2"></i>${text.back}
+                </a>
+              </li>
+            </ol>
+          </nav>
+
+          <h1 class="display-4 mb-4 fw-bold">${film.title}</h1>
+          
+          <div class="mb-4">
+            <span class="badge bg-primary me-2">
+              <i class="fas fa-star me-1"></i>${film.vote_average.toFixed(1)}
+            </span>
+            <span class="text-muted">
+              <i class="far fa-calendar me-1"></i>${new Date(film.release_date).toLocaleDateString(currentLang)}
+            </span>
+          </div>
+
+          <div class="card shadow-sm mb-4">
+            <div class="card-body">
+              <h5 class="card-title mb-3">
+                <i class="fas fa-info-circle me-2"></i>${text.summary}
+              </h5>
+              <p class="card-text lead">${film.overview || 'No overview available.'}</p>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                  <h6 class="card-subtitle mb-2 text-muted">
+                    <i class="fas fa-globe me-2"></i>${text.originCountry}
+                  </h6>
+                  <p class="card-text">${film.production_countries.map(country => country.name).join(', ') || '-'}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                  <h6 class="card-subtitle mb-2 text-muted">
+                    <i class="fas fa-link me-2"></i>${text.website}
+                  </h6>
+                  <p class="card-text">
+                    ${film.homepage ? `<a href="${film.homepage}" target="_blank" class="text-decoration-none">${film.homepage}</a>` : '-'}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                  <h6 class="card-subtitle mb-2 text-muted">
+                    <i class="fas fa-money-bill me-2"></i>${text.budget}
+                  </h6>
+                  <p class="card-text">${film.budget.toLocaleString(currentLang, { style: 'currency', currency: 'USD' })}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                  <h6 class="card-subtitle mb-2 text-muted">
+                    <i class="fas fa-chart-line me-2"></i>${text.revenue}
+                  </h6>
+                  <p class="card-text">${film.revenue.toLocaleString(currentLang, { style: 'currency', currency: 'USD' })}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+};
+```
+
+```css
+
+
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.badge {
+  font-size: 0.9rem;
+  padding: 0.5em 0.8em;
+}
+
+.lead {
+  line-height: 1.8;
+}
+```
+
+

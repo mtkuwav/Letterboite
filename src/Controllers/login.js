@@ -44,7 +44,6 @@ const LoginUser = class LoginUser {
 
       return response.status === 200;
     } catch (error) {
-      console.error('Token validation failed:', error);
       return false;
     }
   }
@@ -54,7 +53,6 @@ const LoginUser = class LoginUser {
     const input = document.querySelector('#token');
 
     if (!form || !input) {
-      console.error('Form elements not found');
       return;
     }
 

@@ -147,8 +147,6 @@ const PopularFilms = class PopularFilms {
   async run() {
     const isAdultEnabled = localStorage.getItem('adult') === 'true';
     const url = `https://api.themoviedb.org/3/discover/movie?include_adult=${isAdultEnabled}&include_video=false&language=${localStorage.getItem('language')}&page=${this.params.page}&sort_by=popularity.desc`;
-    console.log('url:', url);
-    // const url = `https://api.themoviedb.org/3/movie/popular?language=${localStorage.getItem('language')}&page=${this.params.page}`;
     const options = {
       method: 'GET',
       headers: {
@@ -159,10 +157,8 @@ const PopularFilms = class PopularFilms {
 
     const response = await fetch(url, options);
     const data = await response.json();
-    console.log('data : ', data);
     this.Films = data.results;
 
-    console.log('this.Films: ', this.Films);
     this.render();
   }
 };
